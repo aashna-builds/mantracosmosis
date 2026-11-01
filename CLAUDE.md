@@ -10,14 +10,14 @@ Figures and mantras (mode key in brackets):
 
 | Key | Figure | Mantra |
 |---|---|---|
-| `shiva` | Shiva (Adiyogi-style bronze bust) | Mahamrityunjaya, or Om Namah Shivaya (toggle) |
+| `shiva` | Shiva (still, monumental yogic bust, inspired by traditional iconography; never name a specific statue in user-facing text) | Mahamrityunjaya, or Om Namah Shivaya (toggle) |
 | `kali` | Kali (crimson/black) | Kreem |
 | `bhairav` | Bhairav (black sun, amber eyes, fire) | Om Bhram Bhairavaya Namah |
 | `monk` | Buddhist monk | Om Mani Padme Hum (+ optional Tibetan overtone voice) |
 | `gayatri` | Bearded sage + rising sun | Gayatri Mantra |
 | `ganesha` | Ganesha (trunk, ears, tusk, crown) | Om Gam Ganapataye Namah |
 | `tara` | Green Tara as a goddess | Om Tare Tuttare Ture Soha |
-| `hanuman` | Hanuman | Om Ham Hanumate Namah |
+| `hanuman` | Hanuman (heroic vanara, Ram tilak, gada) | Om Ham Hanumate Namah, with Ham written हँ (owner's choice) |
 
 A Sufi figure existed and was **deliberately removed** at the owner's request. Do not re-add it.
 
@@ -35,7 +35,7 @@ A Sufi figure existed and was **deliberately removed** at the owner's request. D
 1. **Mantra data**: `WORDS_S` (Mahamrityunjaya), `WORDS_N` (Namah Shivaya), `WORDS_K`, `WORDS_B`, `WORDS_M`, `WORDS_GA`, `WORDS_GN`, `WORDS_T`, `WORDS_H`. Each word: `{d: Devanagari, l: Latin label, tts?: spoken text, s: [syllables]}`. A syllable is `[text, vowel(a e i o u m), mouth openness 0-1, lip rounding (negative = spread), starts-with-lip-closure 0/1, seconds]`. `MODES` holds per-figure `words, pause, title, sub, begin, meaning, gyan`. `buildTL` turns words into a timeline. `SHIVA_VARS` holds the two Shiva chants. `MODEKEYS` and `MODE_BTNS` list modes and their strip buttons.
 2. **Audio**: `initAudio` builds the graph: detuned saws, three vowel formant filters, vibrato, sub-bass, choir oscillators, drone, generated reverb. `VOICEP` (filter/sub/vibrato/Q per mode), `BASEP` (pitch per mode), `DRONES`, `DRUMI` (drum interval) tune each figure. `setVowel/setPitch/applyVoice` drive it, `bowl/drum/burst/whoosh/boom` are effects. Spoken Hindi (`pickVoice`, `startWord`, `spokenKick`) is optional and off by default.
 3. **Canvas and cosmos**: `layout`, nebula textures (`makeNebula`, `NEBS`), stars, spiral galaxy (`GAL`, `GALC`, `GALF`, `GALD`), embers (`EMB`).
-4. **Figures**: `layer(kind, draw, stepX, stepY)` draws a shape on a hidden canvas and samples it into particles of that `kind`. Per-kind data: `COLS[mode][kind]` colours, `SIZE`, `PRI` (draw order), `GLOW` (additive kinds), and visibility sets `SHIVA_K, KALI_K, ...` collected in `SETS`. Mouth parts (`lip`, `inner`, `tongue`, `fang`) are re-aimed each frame from the chant state.
+4. **Figures**: Shiva uses its own kinds (`faceM`, `eyesS`, `noseS`, `jaw`, `cobra2`, `ganga`, `rudra`) and Hanuman `faceH`, `browH`, `snout`, `tilak`, `sindoor`, `gada`; both share `pecs`. Skin kinds are in the `SKIN` set. `layout()` fits the figure between the top bar and the controls (uses the panel height `ph`); `FADE0` marks where the lower bust dissolves before the Begin button (the face and neck are never faded). `layer(kind, draw, stepX, stepY)` draws a shape on a hidden canvas and samples it into particles of that `kind`. Per-kind data: `COLS[mode][kind]` colours, `SIZE`, `PRI` (draw order), `GLOW` (additive kinds), and visibility sets `SHIVA_K, KALI_K, ...` collected in `SETS`. Mouth parts (`lip`, `inner`, `tongue`, `fang`) are re-aimed each frame from the chant state.
 5. **State and loop**: `frame()` does the chant clock and mouth targets, cosmos drawing, per-mode atmosphere (halo, eclipse, sun, lotus, fire), then the figure particle loop. `WT` holds smooth per-mode blend weights (`mix3` blends colours). `scatter()` / `formed()` implement the optional gather effect. A quality governor lowers draw density on slow devices (`?q=0|1|2` forces a level). The loop pauses when the tab is hidden.
 
 Mode theming in CSS is via `:root[data-mode="..."]` variables (`--gold`, `--glow`, `--bg`, `--line`, `--dim`, `--fg`, `--panel`).
@@ -51,6 +51,10 @@ UI: top bar has a large Chant button and a Settings tray (Mantra, Voice, Overton
 5. Add any new figure shapes with `layer(...)` plus `SIZE`/`PRI` entries, and a `mk()` depth rule if needed.
 6. Add atmosphere in `frame()` (background arrays in the `mix3` calls, nebula in `NEBS`, `GALC`/`GALF`, `RIP`, `BLOOM`, optional custom glow block).
 7. Screenshot it at phone size and check there are no console errors.
+
+## Advisor team
+
+Six read-only advisor lenses live outside the repo in the owner's `~/pantheon/roster/` (`mc-vfx-artist`, `mc-visual-designer`, `mc-esoteric-master`, `mc-aghori-baba`, `mc-mantra-sadhak`, `mc-tantra-sadhak`), with Bindu for the final design pass. They are lenses written for the owner, not real practitioners; they do not replace the native-speaker review.
 
 ## Testing
 
@@ -80,9 +84,10 @@ Mode chip ids: `mS mK mB mM mGa mGn mT mH`. Always check: no `pageerror`/console
 
 - Voices are synthesised imitations, not recordings. A real recorded chant layer would be a big upgrade (the "My recording" button lets the lips follow any audio file by loudness only).
 - The quality governor never steps back up until reload. Hiding the tab pauses visuals but not audio.
-- Ganesha's ear fans run off the sides on narrow phones. Hanuman's mace is partly cut off on narrow phones.
+- Ganesha's ear fans run off the sides on narrow phones. Hanuman's gada is closer to the figure now but can still touch the left edge on the narrowest phones.
+- Shiva's phone panel is four rows tall, so on a 360x640 phone the figure is small; Kali's skull garland still dims behind the Begin button on desktop.
 - **Native-speaker review still needed** for the Hindi gyan lines and a few spellings: see `CONTENT_REVIEW.md` (हूँ vs हूं, Tibetan padme spelling, Tara and Bhairav notes).
-- No `LICENSE` file yet: the owner must choose one before the repo goes public.
+- `LICENSE` is an all-rights-reserved notice written for the owner; swap it if she picks a standard license later.
 - Ideas the owner liked: more figures (Lakshmi, Durga, Krishna, Saraswati, Nam Myoho Renge Kyo), recorded/sampled chant layers, shareable links to a figure, a meditation timer.
 
 ## Git

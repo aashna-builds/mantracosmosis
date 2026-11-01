@@ -56,6 +56,12 @@ Settings (the sliders icon, top right):
 - Hiding the tab pauses the animation but not the chant sound.
 - The page loads fonts from Google Fonts; everything else is in the file.
 
+## Figures: what the latest version draws
+
+- **Shiva** is drawn in a monumental, still, yogic style inspired by traditional iconography: heavy-lidded meditative eyes, strong jaw, matted locks on the vertical axis with a small crescent and a Ganga stream, ash stripes, a serpent at the neck and rudraksha beads. Lips rest nearly closed and open only while chanting.
+- **Hanuman** is a heroic vanara: broad head, stern brow, a muzzle with a mane, a Ram tilak, a gada and a ring of flame centred on his head. His seed syllable is written हँ.
+- On wide screens and phones the figure is sized to sit above the Begin button and the tabs, so the neck stays clear; the lower chest fades out before the controls.
+
 ## Content notes
 
 This piece depicts deities and holy mantras of Hindu and Buddhist traditions. It is made with reverence and is not affiliated with any organisation. Please see [CONTENT_REVIEW.md](CONTENT_REVIEW.md) for the text that should be checked by a native Hindi or Sanskrit speaker before wider release.
@@ -66,4 +72,4 @@ More figures (Lakshmi, Durga, Krishna, Saraswati, Nam Myoho Renge Kyo), recorded
 
 ## Licence
 
-Not yet chosen. Add a `LICENSE` file before publishing publicly.
+All rights reserved. See [LICENSE](LICENSE). Contact the owner for permission to reuse.
