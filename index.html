@@ -465,7 +465,7 @@ for(const m of ['shiva','kali','bhairav','monk']){ const c=COLS[m]; c.hoop=c.ear
 COLS.gayatri={face:[240,196,150],body:[255,176,76],ear:[240,196,150],nose:[244,206,166],eyes:[255,222,170],lip:[232,124,112],inner:[255,150,100],urna:[255,230,150],mala:[255,215,120],beard:[238,238,250],bun:[226,226,240]};
 COLS.ganesha={face:[255,152,76],body:[214,96,52],eyes:[255,232,176],lip:[255,120,90],inner:[255,160,100],urna:[255,240,200],mala:[255,196,90],earG:[255,128,64],trunk:[255,168,96],tusk:[255,250,236],kirita:[255,206,92]};
 COLS.tara={face:[120,214,160],body:[60,150,110],hair:[120,205,165],ear:[120,214,160],hoop:[255,215,120],nose:[150,226,184],eyes:[220,255,230],lip:[255,150,140],inner:[255,170,120],urna:[255,235,160],mala:[255,222,140],tiara:[255,215,120],beads:[255,222,140],pendant:[90,255,190],lotusB:[255,190,220],ribbon:[190,255,225]};
-COLS.hanuman={face:[255,112,52],faceH:[255,112,52],browH:[255,226,176],pecs:[255,184,112],snout:[255,150,84],tilak:[255,238,205],sindoor:[255,64,40],gada:[240,190,110],jaw:[255,150,90],body:[240,98,52],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[190,68,52],inner:[110,60,40],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
+COLS.hanuman={face:[255,112,52],faceH:[255,112,52],browH:[255,226,176],pecs:[255,184,112],snout:[255,168,104],tilak:[255,238,205],sindoor:[255,64,40],gada:[240,190,110],jaw:[255,150,90],body:[240,98,52],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[190,68,52],inner:[110,60,40],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
 COLS.shiva.faceH=COLS.shiva.face; COLS.shiva.browH=COLS.shiva.eyes;
 { const ALLK=new Set(); Object.values(COLS).forEach(c=>Object.keys(c).forEach(k=>ALLK.add(k)));
   for(const m in COLS) for(const k of ALLK) if(!COLS[m][k]) COLS[m][k]=COLS[m].face||[220,200,180]; }
@@ -477,7 +477,7 @@ const MONK_K=new Set(['body','face','ear','nose','eyes','lip','inner','ush','urn
 const GAY_K=new Set(['body','face','ear','nose','eyes','lip','inner','urna','mala','beard','bun']);
 const GAN_K=new Set(['body','face','eyes','lip','inner','urna','mala','earG','trunk','tusk','kirita']);
 const TARA_K=new Set(['body','face','ear','hoop','nose','eyes','lip','inner','urna','mala','hair','tiara','beads','pendant','lotusB','ribbon']);
-const HAN_K=new Set(['body','faceH','jaw','ear','nose','browH','pecs','eyes','lip','inner','snout','tilak','sindoor','mala','muzzle','cheek','gada','fur','kirita']);
+const HAN_K=new Set(['body','faceH','jaw','ear','nose','browH','pecs','eyes','lip','inner','snout','tilak','sindoor','mala','cheek','gada','fur','kirita']);
 const SETS={shiva:SHIVA_K,kali:KALI_K,bhairav:BHAI_K,monk:MONK_K,gayatri:GAY_K,ganesha:GAN_K,tara:TARA_K,hanuman:HAN_K};
 const GLOW={third:1,moon:1,lip:1,inner:1,pendant:1,tongue:1,eyeK:1};
 const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3,faceM:2,faceH:2,eyesS:4,noseS:4,jaw:4,cobra:5,pecs:4,browH:4,ganga:5,rudra:5,cobra2:5,snout:3,tilak:5,sindoor:6,gada:0};
@@ -643,15 +643,15 @@ layer('browH',g=>{ for(const s of [-1,1]){ const X=x=>250+s*x;
 // ===== SAMPLE: Ganga in the jata, a thick serpent coil with a hood, rudraksha beads, Hanuman marks =====
 layer('ganga',g=>{ g.lineWidth=5; g.beginPath(); g.moveTo(258,44); g.bezierCurveTo(226,56,208,84,214,112); g.bezierCurveTo(216,122,214,128,212,134); g.stroke();
   g.lineWidth=3; g.beginPath(); g.moveTo(244,52); g.bezierCurveTo(226,70,222,92,226,108); g.stroke(); },2,2);
-layer('rudra',g=>{ const N=15; for(let i=0;i<=N;i++){ const t=i/N, x=168+t*164, y=466+Math.sin(t*Math.PI)*150-Math.abs(t-.5)*0, r=6.5+((i*37)%5)*.5;
+layer('rudra',g=>{ const N=13; for(let i=0;i<=N;i++){ const t=i/N, x=190+t*120, y=436+Math.sin(t*Math.PI)*58, r=5.5+((i*37)%5)*.5;
   g.beginPath(); g.arc(x,y,r,0,7); g.fill(); } g.globalCompositeOperation='destination-out'; g.lineWidth=1.6;
-  for(let i=0;i<=N;i++){ const t=i/N, x=168+t*164, y=466+Math.sin(t*Math.PI)*150; g.beginPath(); g.moveTo(x-5,y); g.lineTo(x+5,y); g.stroke(); } },2,2);
-layer('cobra2',g=>{ g.lineWidth=12; g.beginPath(); g.moveTo(176,452); g.bezierCurveTo(210,500,240,446,266,488); g.bezierCurveTo(290,524,320,468,338,462); g.stroke();
-  g.lineWidth=5; g.beginPath(); g.ellipse(342,456,19,29,.1,0,7); g.stroke();
-  g.lineWidth=3; g.beginPath(); g.moveTo(342,436); g.lineTo(342,462); g.stroke();
-  g.beginPath(); g.arc(336,442,3,0,7); g.fill(); g.beginPath(); g.arc(348,442,3,0,7); g.fill(); },2,2);
+  for(let i=0;i<=N;i++){ const t=i/N, x=190+t*120, y=436+Math.sin(t*Math.PI)*58; g.beginPath(); g.moveTo(x-4,y); g.lineTo(x+4,y); g.stroke(); } },2,2);
+layer('cobra2',g=>{ g.translate(0,-24); g.lineWidth=11; g.beginPath(); g.moveTo(178,452); g.bezierCurveTo(210,496,240,446,266,486); g.bezierCurveTo(290,520,320,468,340,456); g.stroke();
+  g.beginPath(); g.moveTo(342,470); g.bezierCurveTo(314,448,316,408,342,398); g.bezierCurveTo(368,408,370,448,342,470); g.fill();
+  g.globalCompositeOperation='destination-out'; g.lineWidth=3; g.beginPath(); g.arc(333,426,7,0,6.3); g.stroke(); g.beginPath(); g.arc(351,426,7,0,6.3); g.stroke(); g.beginPath(); g.moveTo(342,436); g.lineTo(342,456); g.stroke(); },2,2);
 // Hanuman: a vanara muzzle, a Ram tilak (U with a red centre line) and a proper gada
-layer('snout',g=>{ g.beginPath(); g.ellipse(250,352,58,40,0,0,7); g.fill(); g.globalCompositeOperation='destination-out'; g.beginPath(); g.ellipse(250,352,44,26,0,0,7); g.fill(); g.lineWidth=0; },2,2);
+layer('snout',g=>{ g.beginPath(); g.moveTo(190,300); g.bezierCurveTo(200,284,300,284,310,300); g.bezierCurveTo(334,330,326,384,290,396); g.bezierCurveTo(268,404,232,404,210,396); g.bezierCurveTo(174,384,166,330,190,300); g.fill();
+  g.globalCompositeOperation='destination-out'; g.beginPath(); g.ellipse(234,310,7,5,.4,0,7); g.fill(); g.beginPath(); g.ellipse(266,310,7,5,-.4,0,7); g.fill(); g.lineWidth=3; g.beginPath(); g.moveTo(250,318); g.lineTo(250,336); g.stroke(); },2.5,2.5);
 layer('tilak',g=>{ g.lineWidth=6; g.beginPath(); g.moveTo(232,168); g.lineTo(236,206); g.quadraticCurveTo(250,224,264,206); g.lineTo(268,168); g.stroke(); },1.5,1.5);
 layer('sindoor',g=>{ g.lineWidth=6; g.beginPath(); g.moveTo(250,172); g.lineTo(250,212); g.stroke(); },1.5,1.5);
 layer('gada',g=>{ g.translate(16,0); g.beginPath(); g.moveTo(74,240); g.lineTo(88,240); g.lineTo(92,700); g.lineTo(70,700); g.closePath(); g.fill();
@@ -930,7 +930,7 @@ function frame(now){
       else if(k==='hairK') a=.55+.35*Math.sin(t*3+p.ph)+energy*.3;
       else if(k==='trunk'||k==='earG') a=.95;
       else a=.8;
-      let ab=(a>1?1:a)*vis*cb; if(!(p.lip||p.tg||p.fg)&&ty>FADE0){ ab*=Math.max(k==='skull'?.45:0,1-(ty-FADE0)/50); } cx.globalAlpha=ab>1?1:ab; const dz=sz*(1+(rz>100?100:rz<-100?-100:rz)*.0009);   // nearer particles a touch larger: subtle depth
+      let ab=(a>1?1:a)*vis*cb; if(!(p.lip||p.tg||p.fg)&&ty>FADE0){ ab*=Math.max(k==='skull'?.6:0,1-(ty-FADE0)/50); } cx.globalAlpha=ab>1?1:ab; const dz=sz*(1+(rz>100?100:rz<-100?-100:rz)*.0009);   // nearer particles a touch larger: subtle depth
       cx.fillRect(p.x,p.y,dz,dz);
     }
   }
