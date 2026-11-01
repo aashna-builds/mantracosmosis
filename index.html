@@ -30,7 +30,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .hud .id *{pointer-events:none}
 .title{font-size:12px;line-height:1.5;letter-spacing:.26em;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.7)}
 .sub{font-family:var(--dev);color:var(--gold);font-size:15px;line-height:1.35;margin-top:2px;text-shadow:0 1px 8px rgba(0,0,0,.7)}
-.status{font-size:10px;letter-spacing:.2em;color:var(--dim);margin-top:6px;text-transform:uppercase;min-height:14px;line-height:1.4;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.status{font-size:11px;letter-spacing:.2em;color:color-mix(in srgb,var(--fg) 60%,var(--dim));margin-top:6px;text-transform:uppercase;min-height:14px;line-height:1.4;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .hint{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + var(--ph,150px) + 88px);
   width:max-content;max-width:min(250px,calc(100vw - 48px));text-align:center;font:400 11px/1.4 var(--display);letter-spacing:.03em;color:var(--fg);
   background:var(--panel);border:1px solid rgba(var(--glow),.35);border-radius:16px;padding:6px 14px;backdrop-filter:blur(6px);pointer-events:none;
@@ -71,7 +71,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .words{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px}
 .w{text-align:center;display:flex;flex-direction:column;gap:3px;max-width:100%}
 .w b{font:400 clamp(20px,5vw,28px)/1.4 var(--dev);color:var(--dim);transition:color .25s,text-shadow .25s;text-wrap:balance}
-.w i{font:400 10px var(--display);font-style:normal;letter-spacing:.14em;color:var(--dim);opacity:.85;text-transform:uppercase}
+.w i{font:400 11px var(--display);font-style:normal;letter-spacing:.14em;color:color-mix(in srgb,var(--fg) 62%,var(--dim));opacity:.95;text-transform:uppercase}
 .w.done b{color:color-mix(in srgb,var(--fg) 78%,var(--dim))}
 .w.on b{color:var(--gold);text-shadow:0 0 14px rgba(var(--glow),.9),0 0 32px rgba(var(--glow),.5)}
 .w.on i{color:var(--gold);opacity:1}
@@ -85,6 +85,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .begin{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + var(--ph,150px) + 88px);
   font:600 14px var(--display);letter-spacing:.22em;text-transform:uppercase;color:#1a0a06;background:var(--gold);border:0;border-radius:40px;
   min-height:48px;padding:0 30px;cursor:pointer;box-shadow:0 0 40px rgba(var(--glow),.55);white-space:nowrap}
+@media (min-width:700px){.panel{min-height:130px;display:flex;flex-direction:column;justify-content:center}}
+@media (max-width:480px){:root[data-mode="shiva"] .w b{font-size:17px}:root[data-mode="shiva"] .words{gap:4px 12px}:root[data-mode="shiva"] .w i{font-size:9px;letter-spacing:.06em}}
 @media (max-width:480px){.chip{letter-spacing:.1em}.hud .id{max-width:calc(100% - 140px)}.title{letter-spacing:.2em}}
 @media (max-height:480px) and (orientation:landscape){
   .panel{max-width:min(760px,70vw);padding:8px 12px;max-height:46dvh}.w i{display:none}.w b{font-size:clamp(18px,4vh,24px);line-height:1.3}
@@ -204,7 +206,7 @@ const WORDS_T=[
 // Hanuman: Om Ham Hanumate Namah
 const WORDS_H=[
  {d:'ॐ',l:'Om',s:[['om','o',.45,1,0,2.2]]},
- {d:'हं',l:'Ham',s:[['ham','a',.8,0,0,1.6]]},
+ {d:'हँ',l:'Ham',s:[['ham','a',.8,0,0,1.6]]},
  {d:'हनुमते',l:'Hanumate',s:[['ha','a',.8,0,0,.45],['nu','u',.4,.9,0,.45],['ma','a',.8,0,1,.45],['te','e',.5,0,0,.7]]},
  {d:'नमः',l:'Namah',s:[['na','a',.8,0,0,.5],['mah','a',.85,0,1,1.2]]}
 ];
@@ -214,7 +216,7 @@ function buildTL(words,pause){ const tl=[]; let T=0;
     w.last=tl.length-1; T+=pause[wi]||.05; });
   return {tl,total:T}; }
 const MODES={
- shiva:{words:WORDS_S,pause:{4:.7,9:2.6},title:'Mahamrityunjaya',sub:'महामृत्युञ्जय मन्त्र',begin:'ॐ &nbsp;Begin the chant',
+ shiva:{words:WORDS_S,pause:{2:.4,4:.7,6:.4,9:2.6},title:'Mahamrityunjaya',sub:'महामृत्युञ्जय मन्त्र',begin:'ॐ &nbsp;Begin the chant',
    gyan:'यह ऋग्वेद का प्राचीन मन्त्र है, जो भगवान शिव को समर्पित है।\nभक्त इसे शान्ति, साहस और जीवन के प्रति कृतज्ञता के भाव से जपते हैं।\nAn ancient Vedic verse to Shiva, chanted with peace, courage and gratitude for life.',
    meaning:'We worship the three-eyed Lord, fragrant and nourishing. Like a ripe cucumber freed from its vine, may we be released from the bonds of death and rest in immortality.'},
  kali:{words:WORDS_K,pause:{0:1.0},title:'Kreem',sub:'क्रीं काली बीज मन्त्र',begin:'क्रीं &nbsp;Begin the chant',
@@ -235,7 +237,7 @@ const MODES={
  tara:{words:WORDS_T,pause:{0:.15,1:.15,2:.15,3:.15,4:2.2},title:'Green Tara',sub:'ॐ तारे तुत्तारे तुरे स्वाहा',begin:'ॐ &nbsp;Begin the chant',
    gyan:'तारा करुणा और शीघ्र सहायता का रूप मानी जाती हैं, विशेषकर तिब्बती बौद्ध परम्परा में।\nमन्त्र उन्हें मुक्ति देने वाली के रूप में पुकारकर स्वाहा के साथ पूर्ण होता है।\nTara is revered as compassion and swift help; the mantra calls on her as liberator and ends with svaha.',
    meaning:'Tara is revered as an embodiment of compassion and swift help, especially in Tibetan Buddhism. The mantra calls on her as the one who liberates and closes with "svaha", "so be it".'},
- hanuman:{words:WORDS_H,pause:{0:.15,1:.2,3:1.8},title:'Hanuman',sub:'ॐ हं हनुमते नमः',begin:'हं &nbsp;Begin the chant',
+ hanuman:{words:WORDS_H,pause:{0:.15,1:.2,2:.18,3:1.8},title:'Hanuman',sub:'ॐ हँ हनुमते नमः',begin:'हँ &nbsp;Begin the chant',
    gyan:'हनुमान जी श्रीराम के परम भक्त हैं और बल, साहस तथा निष्ठा के प्रतीक माने जाते हैं।\nभक्त उनके स्मरण के लिए इस मन्त्र को श्रद्धा से जपते हैं।\nHanuman is honoured for strength, courage and devotion to Rama; devotees chant this mantra in his remembrance.',
    meaning:'Om, salutations to Hanuman. Ham is his seed sound. He is honoured as an ideal of strength, courage and devotion to Rama.'}
 };
@@ -263,7 +265,7 @@ function mouthTarget(s,t){
   const p=(t-s.t0)/(s.t1-s.t0);
   let o=s.o*(s.lab?sstep(.15,.42,p):sstep(0,.22,p));
   if(s.tx==='om') o*=1-sstep(.5,.95,p)*.95;
-  else if(/m$/.test(s.tx)) o*=1-sstep(.62,1,p)*.9;
+  else if(/[mth]$/.test(s.tx)) o*=1-sstep(.62,1,p)*.9;
   else o*=1-sstep(.85,1,p)*.5;
   return {o,r:s.r};
 }
@@ -390,20 +392,21 @@ function spokenKick(now){
 
 /* ================= 3. Canvas and cosmos ================= */
 const cv=$('c'), cx=cv.getContext('2d',{alpha:false});   // opaque: the cosmos repaints every pixel each frame
-let W=0,H=0,DPR=1,S=1,Y0=0,baseX=0,hx=0,hy=0, layoutV=0;
+let W=0,H=0,DPR=1,S=1,Y0=0,baseX=0,hx=0,hy=0, layoutV=0, layPH=-1, FADE=1e9, FADE0=1e9;
 // Quality governor: 0 = full look; 1/2 trim stars, galaxy and dense body particles only if frames stay slow. ?q=N forces a level (testing).
 let QL=0, qEma=16.7, qSlow=0, QF=false; try{ const qq=+new URLSearchParams(location.search).get('q'); if(/[?&]q=/.test(location.search)&&qq>=0&&qq<=2){ QL=qq|0; QF=true; } }catch(e){}
+if(!QF&&Math.min(innerWidth,innerHeight)<500) QL=1;
 const RM=(()=>{ try{ return matchMedia('(prefers-reduced-motion: reduce)'); }catch(e){ return {matches:false}; } })();
 let tm=0;   // cosmic clock: runs slower under reduced motion
 const MW=500, MH=700, HC={x:250,y:260,rx:105,ry:135};
 function layout(){
   const nd=Math.min(devicePixelRatio||1,QL>=2?1.25:QL>=1?1.5:2), nw=innerWidth, nh=innerHeight;
-  if(nw===W&&nh===H&&nd===DPR&&layoutV) return;   // address-bar jitter and duplicate resize events
+  const ph=(document.querySelector('.panel')||{}).offsetHeight||150; if(nw===W&&nh===H&&nd===DPR&&layoutV&&ph===layPH) return; layPH=ph;   // address-bar jitter and duplicate resize events
   DPR=nd; W=nw; H=nh; layoutV++;
   cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cx.setTransform(DPR,0,0,DPR,0,0);
-  if(H>W*1.1){ S=Math.min(W*.0030,H*.0015); Y0=H*.44-260*S; }
-  else { S=H/700*.95; Y0=H*.46-260*S; }
-  baseX=W/2; hx=baseX; hy=Y0+250*S;
+  if(H>W*1.1){ const top=70, uiTop=H-Math.min(ph,H*.28)-140; S=Math.max(.5,Math.min(W*.0025,(uiTop-top)/((H<700?470:560)-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE phone: whole head and neck above the Begin button
+  else { const top=76, uiTop=H-ph-24-62; S=Math.max(.45,Math.min(H/700*1.05,(uiTop-top)/(560-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE: figure fits between top bar and the strip, neck visible
+  baseX=W/2; hx=baseX; hy=Y0+250*S; FADE0=Math.max(FADE-120,Y0+440*S);   // the face and neck are never faded
 }
 let layT=0; function layoutSoon(){ if(layT) return; layT=requestAnimationFrame(()=>{ layT=0; layout(); }); }
 addEventListener('resize',layoutSoon); addEventListener('orientationchange',()=>setTimeout(layoutSoon,120));
@@ -423,7 +426,7 @@ const NEB_M=makeNebula([[40,70,120],[200,150,60],[30,100,110],[110,80,40],[70,60
 const NEB_B=makeNebula([[40,55,100],[15,70,90],[70,40,90],[25,30,60]]);
 const NEB_K=makeNebula([[200,15,40],[120,0,30],[255,70,20],[70,0,24],[170,10,60]]);
 
-const STARS=[]; for(let i=0;i<950;i++){ const z=.15+Math.random()*.85, tone=Math.random();
+const STARS=[]; for(let i=0;i<1500;i++){ const z=.15+Math.random()*.85, tone=Math.random();
   STARS.push({a:Math.random()*6.283,r:Math.pow(Math.random(),.7)*1.15,z,s:z>.85?1.8:1.1,tw:Math.random()*6.28,
     css:tone<.6?'rgb(235,240,255)':tone<.85?'rgb(190,205,255)':'rgb(255,225,180)'}); }
 STARS.sort((a,b)=>a.css<b.css?-1:a.css>b.css?1:0);
@@ -431,7 +434,7 @@ function GALC(k){ const q=k<.22?0:k<.6?1:2;
   const P={shiva:[[255,215,150],[150,170,255],[190,110,255]],kali:[[255,200,120],[255,70,60],[170,20,70]],bhairav:[[255,150,60],[70,100,190],[100,70,160]],monk:[[255,205,120],[220,170,90],[120,110,170]],
     gayatri:[[255,235,170],[255,170,80],[200,100,120]],ganesha:[[255,190,110],[255,130,90],[200,90,110]],tara:[[220,255,230],[90,220,160],[60,150,170]],hanuman:[[255,200,100],[255,110,40],[180,50,30]]};
   const o={}; for(const m in P) o[m]='rgb('+P[m][q]+')'; return o; }
-const GAL=[]; for(let i=0;i<2300;i++){ const rn=Math.pow(Math.random(),.65); GAL.push({arm:i%3,rn,j:(Math.random()-.5)*2,cs:GALC(rn),sz:rn<.2?2:1.3}); }
+const GAL=[]; for(let i=0;i<3600;i++){ const rn=Math.pow(Math.random(),.65); GAL.push({arm:i%3,rn,j:(Math.random()-.5)*2,cs:GALC(rn),sz:rn<.2?2:1.3}); }
 GAL.sort((a,b)=>a.rn-b.rn);   // colour bands are by radius, so this batches fillStyle
 const GALF={shiva:1,kali:1,bhairav:.5,monk:1,gayatri:.6,ganesha:1,tara:1,hanuman:.8}, GALD={kali:-1.5,bhairav:-.7};
 const NEBS={shiva:NEB_S,kali:NEB_K,bhairav:NEB_B,monk:NEB_M,gayatri:NEB_G,ganesha:NEB_N,tara:NEB_T,hanuman:NEB_H};
@@ -446,8 +449,8 @@ const TILT=-.38, CT=Math.cos(TILT), ST=Math.sin(TILT);
 /* ================= 4. The figures (particles sampled from drawn shapes) ================= */
 const FP=[];
 const COLS={
- shiva:{face:[226,172,122],body:[150,104,76],hair:[222,164,116],hairK:[196,140,108],moon:[255,238,200],third:[255,236,190],eyes:[255,214,160],eyeK:[255,214,160],
-   nose:[238,190,150],ear:[230,180,120],beads:[255,205,110],pendant:[255,140,50],skull:[240,230,215],crown:[255,200,90],lip:[255,140,120],inner:[255,170,110],tongue:[255,120,120]},
+ shiva:{face:[206,150,106],faceM:[206,150,106],eyesS:[210,160,112],noseS:[226,170,128],jaw:[190,134,96],cobra:[190,215,255],cobra2:[150,162,196],ganga:[160,205,255],rudra:[214,150,92],pecs:[200,142,104],body:[160,112,84],hair:[222,164,116],hairK:[196,140,108],moon:[255,238,200],third:[255,236,190],eyes:[255,214,160],eyeK:[255,214,160],
+   nose:[238,190,150],ear:[230,180,120],beads:[255,205,110],pendant:[255,140,50],skull:[240,230,215],crown:[255,200,90],lip:[150,98,72],inner:[40,24,20],tongue:[255,120,120]},
  kali:{face:[200,34,50],body:[120,16,32],hair:[120,30,50],hairK:[235,52,62],moon:[255,238,200],third:[255,80,70],eyes:[255,214,160],eyeK:[255,236,226],
    nose:[232,76,86],ear:[255,190,70],beads:[255,205,110],pendant:[255,140,50],skull:[240,230,215],crown:[255,196,70],lip:[255,50,84],inner:[255,96,60],tongue:[255,44,60]}
 };
@@ -462,29 +465,30 @@ for(const m of ['shiva','kali','bhairav','monk']){ const c=COLS[m]; c.hoop=c.ear
 COLS.gayatri={face:[240,196,150],body:[255,176,76],ear:[240,196,150],nose:[244,206,166],eyes:[255,222,170],lip:[232,124,112],inner:[255,150,100],urna:[255,230,150],mala:[255,215,120],beard:[238,238,250],bun:[226,226,240]};
 COLS.ganesha={face:[255,152,76],body:[214,96,52],eyes:[255,232,176],lip:[255,120,90],inner:[255,160,100],urna:[255,240,200],mala:[255,196,90],earG:[255,128,64],trunk:[255,168,96],tusk:[255,250,236],kirita:[255,206,92]};
 COLS.tara={face:[120,214,160],body:[60,150,110],hair:[120,205,165],ear:[120,214,160],hoop:[255,215,120],nose:[150,226,184],eyes:[220,255,230],lip:[255,150,140],inner:[255,170,120],urna:[255,235,160],mala:[255,222,140],tiara:[255,215,120],beads:[255,222,140],pendant:[90,255,190],lotusB:[255,190,220],ribbon:[190,255,225]};
-COLS.hanuman={face:[255,112,52],body:[222,84,44],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[255,90,70],inner:[255,150,90],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
+COLS.hanuman={face:[255,112,52],faceH:[255,112,52],browH:[255,226,176],pecs:[255,184,112],snout:[255,150,84],tilak:[255,238,205],sindoor:[255,64,40],gada:[240,190,110],jaw:[255,150,90],body:[240,98,52],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[190,68,52],inner:[110,60,40],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
+COLS.shiva.faceH=COLS.shiva.face; COLS.shiva.browH=COLS.shiva.eyes;
 { const ALLK=new Set(); Object.values(COLS).forEach(c=>Object.keys(c).forEach(k=>ALLK.add(k)));
   for(const m in COLS) for(const k of ALLK) if(!COLS[m][k]) COLS[m][k]=COLS[m].face||[220,200,180]; }
-const SIZE={face:1.25,body:1.3,hair:2.1,hairK:1.8,moon:1.6,third:1.8,eyes:1.6,eyeK:1.7,nose:1.5,ear:1.6,beads:1.8,pendant:1.9,skull:1.6,crown:1.7,lip:1.9,inner:1.4,tongue:1.8,ash:1.6,trident:1.5,fang:1.4,hoop:1.6,ush:1.5,urna:1.9,robe:1.5,mala:1.8,bun:1.5,beard:1.5,tiara:1.7,lotusB:1.6,ribbon:1.5,muzzle:1.5,cheek:1.6,mace:1.6,fur:1.6,hat:1.6,skirt:1.5,earG:1.7,trunk:2.0,tusk:1.7,kirita:1.7};
-const SHIVA_K=new Set(['hoop','body','hair','face','beads','ear','eyes','nose','third','moon','pendant','inner','lip']);
+const SIZE={face:1.25,body:1.3,hair:2.1,hairK:1.8,moon:1.6,third:1.8,eyes:1.6,eyeK:1.7,nose:1.5,ear:1.6,beads:1.8,pendant:1.9,skull:1.6,crown:1.7,lip:1.9,inner:1.4,tongue:1.8,ash:1.6,trident:1.5,fang:1.4,hoop:1.6,ush:1.5,urna:1.9,robe:1.5,mala:1.8,bun:1.5,beard:1.5,tiara:1.7,lotusB:1.6,ribbon:1.5,muzzle:1.5,cheek:1.6,mace:1.6,fur:1.6,hat:1.6,skirt:1.5,earG:1.7,trunk:2.0,tusk:1.7,kirita:1.7,faceM:1.25,faceH:1.25,eyesS:1.7,noseS:1.6,jaw:1.5,cobra:1.8,pecs:1.6,browH:1.7,ganga:1.8,rudra:1.9,cobra2:1.9,snout:1.5,tilak:1.8,sindoor:1.9,gada:1.6};
+const SHIVA_K=new Set(['hoop','body','hair','faceM','beads','ear','eyesS','noseS','jaw','cobra2','ganga','rudra','pecs','ash','third','moon','inner','lip']);
 const KALI_K=new Set(['hoop','body','face','ear','nose','third','inner','lip','eyeK','tongue','skull','crown','hairK']);
 const BHAI_K=new Set(['hoop','body','face','ear','nose','third','inner','lip','eyeK','skull','hairK','ash','trident','fang']);
 const MONK_K=new Set(['body','face','ear','nose','eyes','lip','inner','ush','urna','robe','mala']);
 const GAY_K=new Set(['body','face','ear','nose','eyes','lip','inner','urna','mala','beard','bun']);
 const GAN_K=new Set(['body','face','eyes','lip','inner','urna','mala','earG','trunk','tusk','kirita']);
 const TARA_K=new Set(['body','face','ear','hoop','nose','eyes','lip','inner','urna','mala','hair','tiara','beads','pendant','lotusB','ribbon']);
-const HAN_K=new Set(['body','face','ear','nose','eyes','lip','inner','urna','mala','muzzle','cheek','mace','fur','kirita']);
+const HAN_K=new Set(['body','faceH','jaw','ear','nose','browH','pecs','eyes','lip','inner','snout','tilak','sindoor','mala','muzzle','cheek','gada','fur','kirita']);
 const SETS={shiva:SHIVA_K,kali:KALI_K,bhairav:BHAI_K,monk:MONK_K,gayatri:GAY_K,ganesha:GAN_K,tara:TARA_K,hanuman:HAN_K};
 const GLOW={third:1,moon:1,lip:1,inner:1,pendant:1,tongue:1,eyeK:1};
-const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3};
-const TILT0=.12;
+const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3,faceM:2,faceH:2,eyesS:4,noseS:4,jaw:4,cobra:5,pecs:4,browH:4,ganga:5,rudra:5,cobra2:5,snout:3,tilak:5,sindoor:6,gada:0};
+const TILT0=.12; const SKIN=new Set(['face','faceM','faceH','body']);
 const DEN=innerWidth<700?1.3:1;
 function domeZ(x,y){ const nx=(x-HC.x)/HC.rx, ny=(y-HC.y)/HC.ry; return Math.sqrt(Math.max(0,1-nx*nx-ny*ny))*HC.rx; }
 function mk(kind,x,y){
   let z;
   if(kind==='hair'||kind==='hairK') z=34+Math.random()*16; else if(kind==='moon') z=40; else if(kind==='ear') z=15; else if(kind==='crown') z=35; else if(kind==='trident'||kind==='mace') z=-20; else if(kind==='ush') z=45; else if(kind==='bun') z=50; else if(kind==='beard') z=Math.max(28,domeZ(x,y)+12); else if(kind==='earG') z=10; else if(kind==='trunk'||kind==='tusk') z=Math.max(34,domeZ(x,y)+14); else if(kind==='kirita') z=35;
   else if(kind==='third') z=domeZ(x,y)+6;
-  else if(y>135&&y<400&&Math.abs(x-250)<HC.rx*1.02) z=domeZ(x,y)+(kind==='face'||kind==='body'?0:6);
+  else if(y>135&&y<400&&Math.abs(x-250)<HC.rx*1.02) z=domeZ(x,y)+(SKIN.has(kind)?0:6);
   else z=Math.sqrt(Math.max(0,1-Math.pow((x-250)/230,2)))*50;
   return {kind,mx:x-250,my:y,mz:z,w:y<430?1:Math.max(.15,1-(y-430)/60),x:Math.random()*innerWidth,y:Math.random()*innerHeight,
     ix:Math.random()*innerWidth,iy:Math.random()*innerHeight,vx:0,vy:0,ph:Math.random()*6.283,lip:null};
@@ -515,7 +519,7 @@ layer('third',g=>{ g.beginPath(); g.moveTo(250,166); g.bezierCurveTo(256,184,267
 layer('hair',g=>{
   g.beginPath(); g.moveTo(148,222); g.bezierCurveTo(120,150,140,76,214,48); g.bezierCurveTo(262,30,326,42,352,88); g.bezierCurveTo(376,130,364,176,352,222);
   g.bezierCurveTo(330,150,290,134,250,134); g.bezierCurveTo(210,134,170,150,148,222); g.closePath(); g.fill();
-  [[118,98,50,24,-.7],[166,58,52,24,-.4],[232,34,58,24,-.12]].forEach(([x,y,rx,ry,r])=>{ g.beginPath(); g.ellipse(x,y,rx,ry,r,0,7); g.fill(); });
+  [[250,38,64,26,0],[190,64,46,22,-.5],[310,64,46,22,.5],[148,104,40,20,-.9],[352,104,38,20,.9]].forEach(([x,y,rx,ry,r])=>{ g.beginPath(); g.ellipse(x,y,rx,ry,r,0,7); g.fill(); });
   for(const s of [-1,1]){ g.beginPath(); g.moveTo(250+s*118,150); g.bezierCurveTo(250+s*185,170,250+s*210,300,250+s*185,430);
     g.bezierCurveTo(250+s*175,520,250+s*205,580,250+s*170,640); g.lineTo(250+s*105,640); g.bezierCurveTo(250+s*118,560,250+s*98,500,250+s*100,450);
     g.bezierCurveTo(250+s*110,380,250+s*132,300,250+s*124,230); g.closePath(); g.fill(); }
@@ -523,7 +527,7 @@ layer('hair',g=>{
   for(const s of [-1,1]) for(let i=0;i<6;i++){ g.beginPath(); g.moveTo(250+s*(128+i*11),175); g.bezierCurveTo(250+s*(160+i*14),240,250+s*(140+i*13),400,250+s*(118+i*10),620); g.stroke(); }
   for(let i=0;i<7;i++){ g.beginPath(); g.moveTo(150+i*30,200); g.quadraticCurveTo(130+i*30,120,90+i*34,60); g.stroke(); }
 },3,4);
-layer('moon',g=>{ g.beginPath(); g.arc(350,110,80,0,7); g.fill(); g.globalCompositeOperation='destination-out'; g.beginPath(); g.arc(322,128,74,0,7); g.fill(); },2,2);
+layer('moon',g=>{ g.beginPath(); g.arc(332,112,58,0,7); g.fill(); g.globalCompositeOperation='destination-out'; g.beginPath(); g.arc(311,126,54,0,7); g.fill(); },2,2);
 layer('eyes',g=>{ for(const s of [-1,1]){ const X=x=>250+s*x;
   g.lineWidth=4; g.beginPath(); g.moveTo(X(22),252); g.quadraticCurveTo(X(52),266,X(88),250); g.stroke();
   g.lineWidth=2.5; g.beginPath(); g.moveTo(X(26),242); g.quadraticCurveTo(X(56),230,X(90),240); g.stroke();
@@ -595,14 +599,65 @@ layer('lotusB',g=>{ g.lineWidth=3; for(const s of [-1,1]){ const px=250+s*172, p
 layer('ribbon',g=>{ g.lineWidth=4; for(const s of [-1,1]){ g.beginPath(); g.moveTo(250+s*72,140); g.bezierCurveTo(250+s*170,118,250+s*196,200,250+s*150,290); g.stroke();
   g.beginPath(); g.moveTo(250+s*84,142); g.bezierCurveTo(250+s*210,150,250+s*236,300,250+s*196,470); g.stroke(); } },2,2);
 // Hanuman: a heavy muzzle and cheeks, a ruff of fur, a mace on the left
-layer('muzzle',g=>{ g.lineWidth=4; g.beginPath(); g.ellipse(250,338,66,50,0,0,7); g.stroke(); g.beginPath(); g.moveTo(250,290); g.lineTo(250,312); g.stroke(); },2,2);
+layer('muzzle',g=>{ g.lineWidth=6; g.beginPath(); g.ellipse(250,346,60,42,0,0,7); g.stroke(); g.beginPath(); g.moveTo(250,290); g.lineTo(250,312); g.stroke(); },2,2);
 layer('cheek',g=>{ g.lineWidth=5; for(const s of [-1,1]){ g.beginPath(); g.moveTo(250+s*98,250); g.quadraticCurveTo(250+s*118,320,250+s*80,372); g.stroke();
   g.lineWidth=3; g.beginPath(); g.moveTo(250+s*84,262); g.quadraticCurveTo(250+s*100,320,250+s*70,360); g.stroke(); g.lineWidth=5; } },2,2);
 layer('mace',g=>{ g.lineWidth=7; g.beginPath(); g.moveTo(66,230); g.lineTo(66,700); g.stroke(); g.beginPath(); g.arc(66,190,38,0,7); g.stroke();
   g.lineWidth=3; for(let i=0;i<8;i++){ const a=i*Math.PI/4; g.beginPath(); g.moveTo(66+Math.cos(a)*38,190+Math.sin(a)*38); g.lineTo(66+Math.cos(a)*54,190+Math.sin(a)*54); g.stroke(); }
   g.beginPath(); g.arc(66,190,22,0,7); g.stroke(); },3,3);
-layer('fur',g=>{ g.lineWidth=3; for(let i=0;i<90;i++){ const a=i/90*6.2832, ex=250+Math.cos(a)*112, ey=262+Math.sin(a)*142, L=10+Math.random()*16;
+layer('fur',g=>{ g.lineWidth=3; const rnd=n=>{ const x=Math.sin(n*127.1)*43758.5453; return x-Math.floor(x); }; for(let i=0;i<150;i++){ const a=i/150*6.2832, ex=250+Math.cos(a)*118, ey=262+Math.sin(a)*146, L=12+rnd(i)*22;
   g.beginPath(); g.moveTo(ex,ey); g.lineTo(ex+Math.cos(a)*L,ey+Math.sin(a)*L); g.stroke(); } },2,2);
+
+// ===== SAMPLE: masculine, monumental faces (Adiyogi-style Shiva, heroic Hanuman) =====
+// Shiva: broad brow, strong squared jaw, wide neck, heavy-lidded meditative eyes, straight strong nose
+layer('faceM',g=>{ g.beginPath(); g.moveTo(250,122);
+  g.bezierCurveTo(340,122,358,196,352,262); g.bezierCurveTo(348,322,336,358,318,384); g.bezierCurveTo(304,404,280,416,250,416);
+  g.bezierCurveTo(220,416,196,404,182,384); g.bezierCurveTo(164,358,152,322,148,262); g.bezierCurveTo(142,196,160,122,250,122); g.fill();
+  g.beginPath(); g.moveTo(186,380); g.lineTo(314,380); g.lineTo(326,500); g.lineTo(174,500); g.closePath(); g.fill(); },3,3);
+layer('eyesS',g=>{ for(const s of [-1,1]){ const X=x=>250+s*x;
+  g.lineWidth=11; g.beginPath(); g.moveTo(X(12),226); g.quadraticCurveTo(X(52),214,X(100),232); g.stroke();       // heavy straight brow
+  g.lineWidth=7; g.beginPath(); g.moveTo(X(24),250); g.quadraticCurveTo(X(58),234,X(94),252); g.stroke();       // drooping upper lid, eyes nearly closed
+  g.lineWidth=2.5; g.beginPath(); g.moveTo(X(30),256); g.quadraticCurveTo(X(58),262,X(88),256); g.stroke();     // soft lower lid
+  g.lineWidth=2; g.beginPath(); g.moveTo(X(34),268); g.quadraticCurveTo(X(58),276,X(86),268); g.stroke(); } },2,2);
+layer('noseS',g=>{ g.lineWidth=5; g.beginPath(); g.moveTo(240,236); g.lineTo(236,296); g.moveTo(260,236); g.lineTo(264,296); g.stroke();
+  g.lineWidth=4; g.beginPath(); g.moveTo(216,308); g.quadraticCurveTo(232,328,250,320); g.quadraticCurveTo(268,328,284,308); g.stroke();
+  g.lineWidth=2.5; g.beginPath(); g.moveTo(226,326); g.quadraticCurveTo(250,336,274,326); g.stroke(); },2,2);
+layer('jaw',g=>{ g.lineWidth=3; g.beginPath(); g.moveTo(170,330); g.quadraticCurveTo(190,388,236,408); g.moveTo(330,330); g.quadraticCurveTo(310,388,264,408); g.stroke();
+  g.beginPath(); g.moveTo(232,382); g.quadraticCurveTo(250,392,268,382); g.stroke(); },2,2);   // jawline and chin cleft
+// serpent coiled at the neck (sarpa), hood rising at the right shoulder
+layer('cobra',g=>{ g.lineWidth=7; g.beginPath(); g.moveTo(172,462); g.bezierCurveTo(206,496,236,452,262,488); g.bezierCurveTo(286,516,318,470,336,452); g.stroke();
+  g.lineWidth=5; g.beginPath(); g.moveTo(186,484); g.bezierCurveTo(220,516,250,476,276,508); g.bezierCurveTo(300,532,326,490,340,474); g.stroke(); },2,2);
+// chest: collarbones and pectorals give the bust weight (Shiva and Hanuman)
+layer('pecs',g=>{ g.lineWidth=5; g.beginPath(); g.moveTo(250,478); g.quadraticCurveTo(196,470,150,486); g.moveTo(250,478); g.quadraticCurveTo(304,470,350,486); g.stroke();
+  g.lineWidth=7; for(const s of [-1,1]){ g.beginPath(); g.moveTo(250+s*8,520); g.bezierCurveTo(250+s*60,548,250+s*128,544,250+s*150,508); g.stroke(); }
+  g.lineWidth=3; g.beginPath(); g.moveTo(250,500); g.lineTo(250,620); g.stroke(); },2,2);
+// Hanuman: broad heroic skull, heavy cheekbones and jaw, wide strong neck, a stern brow
+layer('faceH',g=>{ g.beginPath(); g.moveTo(250,116);
+  g.bezierCurveTo(352,116,372,196,364,262); g.bezierCurveTo(360,326,344,366,320,390); g.bezierCurveTo(302,410,278,418,250,418);
+  g.bezierCurveTo(222,418,198,410,180,390); g.bezierCurveTo(156,366,140,326,136,262); g.bezierCurveTo(128,196,148,116,250,116); g.fill();
+  g.beginPath(); g.moveTo(178,384); g.lineTo(322,384); g.lineTo(338,500); g.lineTo(162,500); g.closePath(); g.fill(); },4,4);
+layer('browH',g=>{ for(const s of [-1,1]){ const X=x=>250+s*x;
+  g.lineWidth=15; g.beginPath(); g.moveTo(X(10),234); g.quadraticCurveTo(X(56),210,X(104),228); g.stroke();
+  g.lineWidth=5; g.beginPath(); g.moveTo(X(20),214); g.quadraticCurveTo(X(60),194,X(110),212); g.stroke(); } },2,2);
+
+// ===== SAMPLE: Ganga in the jata, a thick serpent coil with a hood, rudraksha beads, Hanuman marks =====
+layer('ganga',g=>{ g.lineWidth=5; g.beginPath(); g.moveTo(258,44); g.bezierCurveTo(226,56,208,84,214,112); g.bezierCurveTo(216,122,214,128,212,134); g.stroke();
+  g.lineWidth=3; g.beginPath(); g.moveTo(244,52); g.bezierCurveTo(226,70,222,92,226,108); g.stroke(); },2,2);
+layer('rudra',g=>{ const N=15; for(let i=0;i<=N;i++){ const t=i/N, x=168+t*164, y=466+Math.sin(t*Math.PI)*150-Math.abs(t-.5)*0, r=6.5+((i*37)%5)*.5;
+  g.beginPath(); g.arc(x,y,r,0,7); g.fill(); } g.globalCompositeOperation='destination-out'; g.lineWidth=1.6;
+  for(let i=0;i<=N;i++){ const t=i/N, x=168+t*164, y=466+Math.sin(t*Math.PI)*150; g.beginPath(); g.moveTo(x-5,y); g.lineTo(x+5,y); g.stroke(); } },2,2);
+layer('cobra2',g=>{ g.lineWidth=12; g.beginPath(); g.moveTo(176,452); g.bezierCurveTo(210,500,240,446,266,488); g.bezierCurveTo(290,524,320,468,338,462); g.stroke();
+  g.lineWidth=5; g.beginPath(); g.ellipse(342,456,19,29,.1,0,7); g.stroke();
+  g.lineWidth=3; g.beginPath(); g.moveTo(342,436); g.lineTo(342,462); g.stroke();
+  g.beginPath(); g.arc(336,442,3,0,7); g.fill(); g.beginPath(); g.arc(348,442,3,0,7); g.fill(); },2,2);
+// Hanuman: a vanara muzzle, a Ram tilak (U with a red centre line) and a proper gada
+layer('snout',g=>{ g.beginPath(); g.ellipse(250,352,58,40,0,0,7); g.fill(); g.globalCompositeOperation='destination-out'; g.beginPath(); g.ellipse(250,352,44,26,0,0,7); g.fill(); g.lineWidth=0; },2,2);
+layer('tilak',g=>{ g.lineWidth=6; g.beginPath(); g.moveTo(232,168); g.lineTo(236,206); g.quadraticCurveTo(250,224,264,206); g.lineTo(268,168); g.stroke(); },1.5,1.5);
+layer('sindoor',g=>{ g.lineWidth=6; g.beginPath(); g.moveTo(250,172); g.lineTo(250,212); g.stroke(); },1.5,1.5);
+layer('gada',g=>{ g.translate(16,0); g.beginPath(); g.moveTo(74,240); g.lineTo(88,240); g.lineTo(92,700); g.lineTo(70,700); g.closePath(); g.fill();
+  g.beginPath(); g.ellipse(81,190,28,42,0,0,7); g.fill();
+  for(let i=0;i<10;i++){ const a=i/10*6.2832; g.beginPath(); g.arc(81+Math.cos(a)*30,190+Math.sin(a)*45,6,0,7); g.fill(); }
+  g.globalCompositeOperation='destination-out'; g.lineWidth=2.5; for(const dy of [-18,0,18]){ g.beginPath(); g.ellipse(81,190+dy,26,8,0,0,7); g.stroke(); } },3,3);
 // mouth parts re-aimed every frame: lips, inner mouth, Kali's tongue
 const LIPS=[];
 for(let i=0;i<150;i++){ const p=mk('lip',250,338); p.lip={up:i<75,u:(Math.random()*2-1),v:Math.random(),inner:false}; FP.push(p); LIPS.push(p); }
@@ -740,7 +795,7 @@ function frame(now){
     if(idx!==curIdx){ curIdx=idx;
       if(s){ const pch=s.tx==='taat'?.9:s.tx==='nam'?.95:s.tx==='om'?.89:1;
         if((cur==='shiva'||cur==='monk'||cur==='gayatri'||cur==='ganesha'||cur==='tara')&&idx===0) bowl(); if((cur==='kali'&&s.tx==='kr')||(cur==='bhairav'&&s.tx==='bh')){ burst(); addRipple(1); }
-        setVowel(s.v,pch); if(cur==='shiva') addRipple(s.o);
+        setVowel(s.v,pch); if(cur==='shiva') addRipple(s.o*.5);
         if(s.wi!==lastWord){ lastWord=s.wi; markWord(s.wi); statusEl.textContent='Chanting // '+WORDS[s.wi].l; } }
       else { markWord(-1); lastWord=-1; } }
     tgt=mouthTarget(s,tt);
@@ -753,7 +808,7 @@ function frame(now){
     if(DRUMI[cur]&&A&&t>nextDrum){ drum(); addRipple(.9); nextDrum=t+DRUMI[cur]; }
   }
   if((cur==='kali'||cur==='bhairav')&&tgt.o>0) tgt.o+=.04*Math.sin(t*9);   // the wail shivers
-  mouthOpen+=(tgt.o-mouthOpen)*Math.min(1,dt*18); mouthRound+=(tgt.r-mouthRound)*Math.min(1,dt*12);
+  mouthOpen+=(tgt.o*(cur==='shiva'?.55:cur==='hanuman'?.7:1)-mouthOpen)*Math.min(1,dt*18); mouthRound+=(tgt.r-mouthRound)*Math.min(1,dt*12);
   energy+=((chanting?Math.max(mouthOpen,(cur==='kali'||cur==='bhairav')&&A?.25:0):0)-energy)*Math.min(1,dt*4);
 
   const ty=Math.max(-.32,Math.min(.32,(ptr.x-W/2)/(W/2)*.32)), tp=Math.max(-.12,Math.min(.12,(ptr.y-H*.4)/(H/2)*.12));
@@ -778,7 +833,7 @@ function frame(now){
     if(x<-4||x>W+4||y<-4||y>H+4) continue;
     cx.globalAlpha=(.35+.65*s.z)*(.65+.35*Math.sin(t*(1+s.z*2)+s.tw)); if(s.css!==fs){ fs=s.css; cx.fillStyle=fs; } cx.fillRect(x,y,s.s,s.s);
     if(s.z>.93){ cx.fillRect(x-3,y+.4,7,.6); cx.fillRect(x+.4,y-3,.6,7); } }
-  const R=Math.max(W,H)*.6; let dom='shiva', mxw=0; for(const m of MODEKEYS) if(WT[m]>mxw){ mxw=WT[m]; dom=m; }
+  const R=Math.max(W,H)*.95; let dom='shiva', mxw=0; for(const m of MODEKEYS) if(WT[m]>mxw){ mxw=WT[m]; dom=m; }
   const fade=Math.max(0,(mxw-.5)*2)*(GALF[dom]||1), dir=GALD[dom]||1;
   const gq=QL>=1?2:1, gboost=gq>1?1.3:1; fs='';
   for(let gi=0;gi<GAL.length;gi+=gq){ const g=GAL[gi], r=g.rn*R, th=g.arm*2.094+g.rn*4.4+g.j*(.55-.3*g.rn)+tm*(.09/(.25+g.rn*1.2))*dir;
@@ -786,7 +841,7 @@ function frame(now){
     if(x<-3||x>W+3||y<-3||y>H+3) continue;
     cx.globalAlpha=Math.min(1,(.14+.5*Math.pow(1-g.rn,1.2))*(.7+energy*.7)*gboost)*fade; const gc=g.cs[dom]; if(gc!==fs){ fs=gc; cx.fillStyle=fs; } cx.fillRect(x,y,g.sz,g.sz); }
   // halo (Shiva) or eclipse (Kali), mandala rings, chant ripples
-  if(WT.shiva>.02){ const hg=cx.createRadialGradient(hx,hy,0,hx,hy,230*S); hg.addColorStop(0,'rgba(255,205,120,'+((.12+energy*.2)*WT.shiva).toFixed(3)+')'); hg.addColorStop(.55,'rgba(150,110,255,'+((.10+energy*.12)*WT.shiva).toFixed(3)+')'); hg.addColorStop(1,'rgba(60,40,160,0)');
+  if(WT.shiva>.02){ const hg=cx.createRadialGradient(hx,hy,0,hx,hy,230*S); hg.addColorStop(0,'rgba(255,205,120,'+((.15+energy*.1)*WT.shiva).toFixed(3)+')'); hg.addColorStop(.55,'rgba(150,110,255,'+((.10+energy*.12)*WT.shiva).toFixed(3)+')'); hg.addColorStop(1,'rgba(60,40,160,0)');
     cx.globalAlpha=1; cx.fillStyle=hg; cx.fillRect(hx-260*S,hy-260*S,520*S,520*S); }
   cx.globalCompositeOperation='source-over';
   for(const [wgt,c1,c2,c3] of [[WT.kali,'255,50,40','200,0,30','120,0,20'],[WT.bhairav,'255,150,50','180,70,20','60,30,10']]){ if(wgt<.02) continue;
@@ -805,10 +860,11 @@ function frame(now){
       cx.beginPath(); cx.moveTo(hx+Math.cos(a)*r1,hy+Math.sin(a)*r1); cx.lineTo(hx+Math.cos(a)*r2,hy+Math.sin(a)*r2); cx.stroke(); }
     const hz=cx.createLinearGradient(0,H*.62,0,H); hz.addColorStop(0,'rgba(255,140,50,0)'); hz.addColorStop(1,'rgba(255,150,60,'+(.25*wg).toFixed(3)+')'); cx.globalAlpha=1; cx.fillStyle=hz; cx.fillRect(0,H*.62,W,H*.38); }
   if(WT.hanuman>.02){ const wh=WT.hanuman;   // dusk fire and a ring of flame
-    const f2=cx.createRadialGradient(hx,hy,0,hx,hy,280*S); f2.addColorStop(0,'rgba(255,130,40,'+((.34+energy*.3)*wh).toFixed(3)+')'); f2.addColorStop(.55,'rgba(255,70,20,'+((.14+energy*.12)*wh).toFixed(3)+')'); f2.addColorStop(1,'rgba(120,20,5,0)');
+    const f2=cx.createRadialGradient(hx,hy,0,hx,hy,280*S); f2.addColorStop(0,'rgba(255,130,40,'+((.22+energy*.3)*wh).toFixed(3)+')'); f2.addColorStop(.55,'rgba(255,70,20,'+((.09+energy*.12)*wh).toFixed(3)+')'); f2.addColorStop(1,'rgba(120,20,5,0)');
     cx.globalAlpha=1; cx.fillStyle=f2; cx.fillRect(hx-300*S,hy-300*S,600*S,600*S);
-    cx.strokeStyle='#ff8a3a'; cx.lineWidth=3; cx.globalAlpha=(.35+energy*.4)*wh; cx.beginPath(); cx.arc(hx,hy,215*S,0,6.283); cx.stroke();
-    const fl=cx.createLinearGradient(0,H*.7,0,H); fl.addColorStop(0,'rgba(255,90,20,0)'); fl.addColorStop(1,'rgba(255,110,30,'+(.35*wh).toFixed(3)+')'); cx.globalAlpha=1; cx.fillStyle=fl; cx.fillRect(0,H*.7,W,H*.3); }
+    cx.strokeStyle='#ff8a3a'; cx.lineWidth=3; cx.globalAlpha=(.35+energy*.4)*wh; cx.beginPath(); cx.arc(hx,Y0+222*S,Math.min(222*S,W/2-16),0,6.283); cx.stroke();
+    { const dc=cx.createRadialGradient(hx,Y0+250*S,0,hx,Y0+250*S,150*S); dc.addColorStop(0,'rgba(20,4,0,'+(.5*wh).toFixed(3)+')'); dc.addColorStop(1,'rgba(20,4,0,0)'); cx.globalAlpha=1; cx.fillStyle=dc; cx.fillRect(hx-160*S,Y0+90*S,320*S,320*S); }
+    const fl=cx.createLinearGradient(0,H*.7,0,H); fl.addColorStop(0,'rgba(255,90,20,0)'); fl.addColorStop(1,'rgba(255,110,30,'+(.22*wh).toFixed(3)+')'); cx.globalAlpha=1; cx.fillStyle=fl; cx.fillRect(0,H*.7,W,H*.3); }
   if(WT.tara>.02){ const wt=WT.tara;
     const tg=cx.createRadialGradient(hx,hy,0,hx,hy,260*S); tg.addColorStop(0,'rgba(190,255,215,'+((.2+energy*.2)*wt).toFixed(3)+')'); tg.addColorStop(.6,'rgba(60,200,140,'+((.1+energy*.1)*wt).toFixed(3)+')'); tg.addColorStop(1,'rgba(20,120,90,0)');
     cx.globalAlpha=1; cx.fillStyle=tg; cx.fillRect(hx-280*S,hy-280*S,560*S,560*S);
@@ -835,7 +891,7 @@ function frame(now){
     cx.globalAlpha=(1-age)*.45*rp.str; cx.lineWidth=1.5; cx.strokeStyle=RIP[cur][age<.5?0:1]; cx.beginPath(); cx.arc(hx,hy,(150+age*340)*S,0,6.283); cx.stroke(); }
 
   // ---- figure ----
-  const SW=RM.matches?.3:1, breatheY=Math.sin(t*.8)*3*S*SW, MY=348, openPx=mouthOpen*30, hw=36*(1-.42*mouthRound);
+  const SW=RM.matches?.3:1, breatheY=Math.sin(t*.8)*3*S*SW, MY=348, openPx=mouthOpen*30, hw=(cur==='hanuman'?42:36)*(1-.42*mouthRound);
   const tongueL=22+energy*46+Math.sin(t*3)*3*energy;
   if(wtMoving||!cssC){ cssC=cssC||{}; for(const k in COLS.shiva) cssC[k]=mixK(k); }
   const css=cssC, drag=Math.pow(.001,dt), cb=1+climax*.6, pq=QL>=2?3:QL>=1?2:1;
@@ -844,7 +900,7 @@ function frame(now){
   for(const kd of KINDS){
     const k=kd.k, vis=VIS[k]; if(vis<.02) continue;
     cx.fillStyle=css[k]; cx.globalCompositeOperation=GLOW[k]?'lighter':'source-over';
-    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*Math.max(.9,S*(k==='face'||k==='body'?.95:1))*(1+climax*.25)*(thin?1.2:1);
+    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*Math.max(.9,S*(SKIN.has(k)?.95:1))*(1+climax*.25)*(thin?1.2:1);
     for(let i=kd.a;i<kd.b;i++){
       if(thin&&i%pq) continue;
       const p=FP[i]; let mx=p.mx,my=p.my,mz=p.mz;
@@ -868,13 +924,13 @@ function frame(now){
       p.vx*=drag; p.vy*=drag; p.x+=p.vx*dt; p.y+=p.vy*dt;
       if(p.lip||p.tg||p.fg){ p.x=tx; p.y=ty; }
       let a;
-      if(k==='face'||k==='body'){ const l=Math.max(0,Math.min(1,rz/100)); a=(k==='face'?.55:.4)+.45*l+.06*Math.sin(t*1.7+p.ph); }
+      if(SKIN.has(k)){ const l=Math.max(0,Math.min(1,rz/100)); a=(k!=='body'?.55:.4)+.45*l+.06*Math.sin(t*1.7+p.ph); }
       else if(k==='third') a=.6+.4*Math.sin(t*2.2+p.ph)+energy*.5;
-      else if(k==='lip') a=.85; else if(k==='inner') a=Math.min(.8,mouthOpen*1.4)*.8; else if(k==='tongue') a=.9; else if(k==='fang') a=Math.min(1,mouthOpen*4);
+      else if(k==='lip') a=.85-.55*WT.shiva; else if(k==='inner') a=Math.min(.8,mouthOpen*1.4)*.8; else if(k==='tongue') a=.9; else if(k==='fang') a=Math.min(1,mouthOpen*4);
       else if(k==='hairK') a=.55+.35*Math.sin(t*3+p.ph)+energy*.3;
       else if(k==='trunk'||k==='earG') a=.95;
       else a=.8;
-      const ab=(a>1?1:a)*vis*cb; cx.globalAlpha=ab>1?1:ab; const dz=sz*(1+(rz>100?100:rz<-100?-100:rz)*.0009);   // nearer particles a touch larger: subtle depth
+      let ab=(a>1?1:a)*vis*cb; if(!(p.lip||p.tg||p.fg)&&ty>FADE0){ ab*=Math.max(k==='skull'?.45:0,1-(ty-FADE0)/50); } cx.globalAlpha=ab>1?1:ab; const dz=sz*(1+(rz>100?100:rz<-100?-100:rz)*.0009);   // nearer particles a touch larger: subtle depth
       cx.fillRect(p.x,p.y,dz,dz);
     }
   }
@@ -885,8 +941,8 @@ function frame(now){
   const bc=BLOOM[cur]||'255,215,150';
   bl.addColorStop(0,'rgba('+bc+','+Math.min(1,.45+energy*.4+climax*.4).toFixed(3)+')'); bl.addColorStop(1,'rgba(255,100,60,0)');
   cx.globalAlpha=1; cx.fillStyle=bl; cx.fillRect(te[0]-120*S,te[1]-120*S,240*S,240*S);
-  if(WT.shiva>.05){ const mp=[baseX+(395-250)*S, Y0+70*S+breatheY], mg=cx.createRadialGradient(mp[0],mp[1],0,mp[0],mp[1],60*S);
-    mg.addColorStop(0,'rgba(220,230,255,'+(.35*WT.shiva).toFixed(3)+')'); mg.addColorStop(1,'rgba(220,230,255,0)'); cx.fillStyle=mg; cx.fillRect(mp[0]-60*S,mp[1]-60*S,120*S,120*S); }
+  if(WT.shiva>.05){ const mp=[baseX+(372-250)*S, Y0+92*S+breatheY], mg=cx.createRadialGradient(mp[0],mp[1],0,mp[0],mp[1],46*S);
+    mg.addColorStop(0,'rgba(220,230,255,'+(.3*WT.shiva).toFixed(3)+')'); mg.addColorStop(1,'rgba(220,230,255,0)'); cx.fillStyle=mg; cx.fillRect(mp[0]-46*S,mp[1]-46*S,92*S,92*S); }
   if(mouthOpen>.03){   // warm light spilling from the open mouth, tinted by the mode
     const mz2=domeZ(250,MY)+8, mgx=baseX+mz2*Math.sin(yaw)*S, mgy=Y0+((MY-260)*pc-mz2*yc*ps+260)*S+breatheY, mr=(24+openPx*1.15)*S*(1+climax*.3), mc=MOUTHC[dom]||MOUTHC.shiva, ma=Math.min(1,mouthOpen);
     const mgr=cx.createRadialGradient(mgx,mgy,0,mgx,mgy,mr); mgr.addColorStop(0,'rgba(255,238,215,'+(.34*ma).toFixed(3)+')'); mgr.addColorStop(.3,'rgba('+mc+','+(.26*ma).toFixed(3)+')'); mgr.addColorStop(1,'rgba('+mc+',0)');
@@ -900,6 +956,6 @@ function frame(now){
 }
 rafId=requestAnimationFrame(frame);
 const panelEl=document.querySelector('.panel'); const setPH=()=>document.documentElement.style.setProperty('--ph',panelEl.offsetHeight+'px');
-try{ new ResizeObserver(setPH).observe(panelEl); }catch(e){} setPH();
+try{ new ResizeObserver(()=>{ setPH(); layoutSoon(); }).observe(panelEl); }catch(e){} setPH(); layoutSoon();
 markWord(-1);
 </script>
