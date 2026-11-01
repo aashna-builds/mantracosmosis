@@ -1,5 +1,9 @@
 # Content review checklist
 
+**Reviewed by the owner (native Hindi speaker):** all two-line Hindi gyan notes for the eight figures and Om Namah Shivaya, the avagraha spelling in माऽमृतात्, and हँ for Hanuman's seed syllable. No changes were needed.
+
+**Still open:** the Tibetan spelling of "padme" (a Tibetan reader), and whether the Kali, Bhairav and Tara wording reads as respectful in each tradition.
+
 Please have a native Hindi / Sanskrit reader (and, for the monk, a Tibetan reader) check these before a public release.
 
 ## Hindi explanations ("Gyan")
