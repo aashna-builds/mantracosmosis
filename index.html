@@ -422,7 +422,7 @@ function layout(){
   cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cx.setTransform(DPR,0,0,DPR,0,0);
   if(H>W*1.1){ const top=70, uiTop=H-Math.min(ph,H*.28)-140; S=Math.max(.5,Math.min(W*.0025,(uiTop-top)/((H<700?470:560)-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE phone: whole head and neck above the Begin button
   else { const top=76, uiTop=H-ph-24-62; S=Math.max(.45,Math.min(H/700*1.05,(uiTop-top)/(560-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE: figure fits between top bar and the strip, neck visible
-  if(cur==='om'){ S=Math.min(H/700*1.45,W*.0040); Y0=H*.44-300*S; FADE=1e9; }
+  if(cur==='om'){ S=Math.min(H/700*1.3,W*.0036); Y0=H*.52-225*S; FADE=1e9; }
   baseX=W/2; hx=baseX; hy=Y0+250*S; FADE0=Math.max(FADE-120,Y0+440*S);   // the face and neck are never faded
 }
 let layT=0; function layoutSoon(){ if(layT) return; layT=requestAnimationFrame(()=>{ layT=0; layout(); }); }
@@ -448,7 +448,7 @@ const STARS=[]; for(let i=0;i<1500;i++){ const z=.15+Math.random()*.85, tone=Mat
   STARS.push({a:Math.random()*6.283,r:Math.pow(Math.random(),.7)*1.15,z,s:z>.85?1.8:1.1,tw:Math.random()*6.28,
     css:tone<.6?'rgb(235,240,255)':tone<.85?'rgb(190,205,255)':'rgb(255,225,180)'}); }
 STARS.sort((a,b)=>a.css<b.css?-1:a.css>b.css?1:0);
-const OMW=[], SHOOT=[]; let nextShoot=0;
+const OMW=[], SHOOT=[]; let nextShoot=0, omT0=-1;   // omT0: when the Om face started growing from its seed (-1 = still a seed)
 const MWP=[]; for(let i=0;i<9000;i++){ const u=(Math.random()+Math.random()+Math.random()-1.5)/1.5, v=(Math.random()+Math.random()+Math.random()+Math.random()-2)*.07*(1-.5*Math.abs(u));
   const core=Math.max(0,1-Math.abs(v)*9)*Math.max(0,1-Math.abs(u)*1.1), tier=core>.6?0:core>.3?1:Math.random()<.5?2:3;
   MWP.push({u,v,tier,a:.25+Math.random()*.6*(.4+core),s:Math.random()<.08?2.2:1.1}); }
@@ -490,12 +490,12 @@ for(const m of ['shiva','kali','bhairav','monk']){ const c=COLS[m]; c.hoop=c.ear
 COLS.gayatri={face:[240,196,150],body:[255,176,76],ear:[240,196,150],nose:[244,206,166],eyes:[255,222,170],lip:[232,124,112],inner:[255,150,100],urna:[255,230,150],mala:[255,215,120],beard:[238,238,250],bun:[226,226,240]};
 COLS.ganesha={face:[255,152,76],body:[214,96,52],eyes:[255,232,176],lip:[255,120,90],inner:[255,160,100],urna:[255,240,200],mala:[255,196,90],earG:[255,128,64],trunk:[255,168,96],tusk:[255,250,236],kirita:[255,206,92]};
 COLS.tara={face:[120,214,160],body:[60,150,110],hair:[120,205,165],ear:[120,214,160],hoop:[255,215,120],nose:[150,226,184],eyes:[220,255,230],lip:[255,150,140],inner:[255,170,120],urna:[255,235,160],mala:[255,222,140],tiara:[255,215,120],beads:[255,222,140],pendant:[90,255,190],lotusB:[255,190,220],ribbon:[190,255,225]};
-COLS.om={face:[140,240,255],eyesS:[140,240,255],lip:[255,90,210],inner:[255,150,235],tongue:[255,120,220]};
+COLS.om={omsym:[255,190,96],face:[140,240,255],eyesS:[140,240,255],lip:[255,90,210],inner:[255,150,235],tongue:[255,120,220]};
 COLS.hanuman={face:[255,112,52],faceH:[255,112,52],browH:[255,226,176],pecs:[255,184,112],snout:[255,168,104],tilak:[255,238,205],sindoor:[255,64,40],gada:[240,190,110],jaw:[255,150,90],body:[240,98,52],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[190,68,52],inner:[110,60,40],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
 COLS.shiva.faceH=COLS.shiva.face; COLS.shiva.browH=COLS.shiva.eyes;
 { const ALLK=new Set(); Object.values(COLS).forEach(c=>Object.keys(c).forEach(k=>ALLK.add(k)));
   for(const m in COLS) for(const k of ALLK) if(!COLS[m][k]) COLS[m][k]=COLS[m].face||[220,200,180]; }
-const SIZE={face:1.25,body:1.3,hair:2.1,hairK:1.8,moon:1.6,third:1.8,eyes:1.6,eyeK:1.7,nose:1.5,ear:1.6,beads:1.8,pendant:1.9,skull:1.6,crown:1.7,lip:1.9,inner:1.4,tongue:1.8,ash:1.6,trident:1.5,fang:1.4,hoop:1.6,ush:1.5,urna:1.9,robe:1.5,mala:1.8,bun:1.5,beard:1.5,tiara:1.7,lotusB:1.6,ribbon:1.5,muzzle:1.5,cheek:1.6,mace:1.6,fur:1.6,hat:1.6,skirt:1.5,earG:1.7,trunk:2.0,tusk:1.7,kirita:1.7,faceM:1.25,faceH:1.25,eyesS:1.7,noseS:1.6,jaw:1.5,cobra:1.8,pecs:1.6,browH:1.7,ganga:1.8,rudra:1.9,cobra2:1.9,snout:1.5,tilak:1.8,sindoor:1.9,gada:1.6};
+const SIZE={face:1.25,body:1.3,hair:2.1,hairK:1.8,moon:1.6,third:1.8,eyes:1.6,eyeK:1.7,nose:1.5,ear:1.6,beads:1.8,pendant:1.9,skull:1.6,crown:1.7,lip:1.9,inner:1.4,tongue:1.8,ash:1.6,trident:1.5,fang:1.4,hoop:1.6,ush:1.5,urna:1.9,robe:1.5,mala:1.8,bun:1.5,beard:1.5,tiara:1.7,lotusB:1.6,ribbon:1.5,muzzle:1.5,cheek:1.6,mace:1.6,fur:1.6,hat:1.6,skirt:1.5,earG:1.7,trunk:2.0,tusk:1.7,kirita:1.7,faceM:1.25,faceH:1.25,eyesS:1.7,noseS:1.6,jaw:1.5,cobra:1.8,pecs:1.6,browH:1.7,omsym:1.5,ganga:1.8,rudra:1.9,cobra2:1.9,snout:1.5,tilak:1.8,sindoor:1.9,gada:1.6};
 const SHIVA_K=new Set(['hoop','body','hair','faceM','beads','ear','eyesS','noseS','jaw','cobra2','ganga','rudra','pecs','ash','third','moon','inner','lip']);
 const KALI_K=new Set(['hoop','body','face','ear','nose','third','inner','lip','eyeK','tongue','skull','crown','hairK']);
 const BHAI_K=new Set(['hoop','body','face','ear','nose','third','inner','lip','eyeK','skull','hairK','ash','trident','fang']);
@@ -504,10 +504,10 @@ const GAY_K=new Set(['body','face','ear','nose','eyes','lip','inner','urna','mal
 const GAN_K=new Set(['body','face','eyes','lip','inner','urna','mala','earG','trunk','tusk','kirita']);
 const TARA_K=new Set(['body','face','ear','hoop','nose','eyes','lip','inner','urna','mala','hair','tiara','beads','pendant','lotusB','ribbon']);
 const HAN_K=new Set(['body','faceH','jaw','ear','nose','browH','pecs','eyes','lip','inner','snout','tilak','sindoor','mala','cheek','gada','fur','kirita']);
-const OM_K=new Set(['eyesS','lip','inner']);
+const OM_K=new Set(['omsym','eyesS','lip','inner']);
 const SETS={om:OM_K,shiva:SHIVA_K,kali:KALI_K,bhairav:BHAI_K,monk:MONK_K,gayatri:GAY_K,ganesha:GAN_K,tara:TARA_K,hanuman:HAN_K};
-const GLOW={third:1,moon:1,lip:1,inner:1,pendant:1,tongue:1,eyeK:1};
-const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3,faceM:2,faceH:2,eyesS:4,noseS:4,jaw:4,cobra:5,pecs:4,browH:4,ganga:5,rudra:5,cobra2:5,snout:3,tilak:5,sindoor:6,gada:0};
+const GLOW={omsym:1,third:1,moon:1,lip:1,inner:1,pendant:1,tongue:1,eyeK:1};
+const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3,faceM:2,faceH:2,eyesS:4,noseS:4,jaw:4,cobra:5,pecs:4,browH:4,omsym:5,ganga:5,rudra:5,cobra2:5,snout:3,tilak:5,sindoor:6,gada:0};
 const TILT0=.12; const SKIN=new Set(['face','faceM','faceH','body']);
 const DEN=innerWidth<700?1.3:1;
 function domeZ(x,y){ const nx=(x-HC.x)/HC.rx, ny=(y-HC.y)/HC.ry; return Math.sqrt(Math.max(0,1-nx*nx-ny*ny))*HC.rx; }
@@ -685,6 +685,9 @@ layer('gada',g=>{ g.translate(16,0); g.beginPath(); g.moveTo(74,240); g.lineTo(8
   g.beginPath(); g.ellipse(81,190,28,42,0,0,7); g.fill();
   for(let i=0;i<10;i++){ const a=i/10*6.2832; g.beginPath(); g.arc(81+Math.cos(a)*30,190+Math.sin(a)*45,6,0,7); g.fill(); }
   g.globalCompositeOperation='destination-out'; g.lineWidth=2.5; for(const dy of [-18,0,18]){ g.beginPath(); g.ellipse(81,190+dy,26,8,0,0,7); g.stroke(); } },3,3);
+// Om symbol, traced from the owner's reference image (200x200 run-length mask: [start,length,...] per row); no font or image file needed
+const OM_MASK=[[],[],[],[],[],[],[],[],[],[119,1],[119,2],[118,5],[117,7],[116,9],[115,11],[114,14],[113,16],[112,18],[111,20],[110,23],[109,25],[108,27],[107,28],[106,28],[107,26],[87,1,108,24],[87,2,109,22],[88,3,111,20],[88,4,112,18],[88,5,113,16],[89,5,114,14],[89,6,115,12],[90,6,117,9],[90,8,118,7],[90,9,119,5,151,1],[91,9,120,3,150,3],[92,10,121,1,148,6],[92,12,147,8],[93,12,146,10],[93,14,144,12],[94,16,142,15],[94,18,141,17],[95,20,138,21],[57,18,96,24,135,25],[53,26,96,64],[49,33,97,64],[46,39,98,64],[44,42,98,65],[41,47,99,64],[39,50,100,64],[37,54,101,64],[35,57,102,62],[34,59,103,60],[32,62,104,58],[31,64,105,55],[29,66,106,53],[28,68,108,49],[27,70,109,47],[26,72,111,43],[26,72,113,40],[27,72,115,36],[27,72,118,30],[28,72,121,24],[29,71,125,17],[30,71],[30,71],[31,35,79,23],[32,30,82,20],[33,26,83,19],[33,23,85,18],[34,20,85,18,147,6],[35,16,86,17,143,17],[36,13,87,16,141,23],[36,12,87,16,139,27],[37,9,88,16,138,30],[38,7,88,16,137,33],[38,5,88,16,135,36],[39,3,88,16,134,39],[40,1,88,16,133,41],[88,16,132,43],[88,16,131,45],[88,16,131,46],[88,16,130,48],[88,16,129,32,162,17],[87,16,129,28,166,14],[87,16,128,27,167,13],[86,17,127,27,168,13],[85,18,126,27,169,13],[84,19,126,26,170,12],[83,19,125,26,170,13],[81,21,125,25,171,12],[79,22,124,25,171,13],[75,26,123,25,171,13],[68,32,123,25,172,13],[55,45,122,25,172,13],[54,45,122,24,172,14],[54,45,121,25,173,13],[54,44,121,24,173,13],[55,42,120,25,173,14],[55,42,119,25,173,14],[56,40,119,25,174,13],[56,39,118,26,174,14],[57,37,117,26,174,14],[57,35,117,26,174,14],[58,33,116,26,174,14],[58,31,115,27,174,15],[59,29,114,27,175,14],[59,27,113,28,175,14],[60,27,112,28,175,14],[60,28,111,29,175,14],[61,29,110,29,175,15],[61,31,109,30,175,15],[62,31,107,31,175,15],[62,32,105,32,175,15],[63,32,103,33,175,15],[63,73,175,15],[63,72,175,16],[64,70,175,16],[67,65,175,16],[74,57,174,17],[77,53,174,17],[79,49,174,17],[81,45,174,17],[83,20,106,17,174,17],[9,1,84,20,113,4,173,18],[9,2,85,19,173,18],[9,2,86,19,173,18],[9,3,87,19,173,18],[9,3,88,18,172,19],[9,3,88,19,172,19],[10,3,89,18,171,20],[10,3,90,18,171,20],[10,4,90,18,170,20],[10,4,90,18,170,20],[10,4,90,18,170,20],[10,5,91,18,121,1,169,21],[11,4,91,18,121,2,168,22],[11,5,91,18,122,2,168,22],[11,5,91,19,122,3,167,22],[11,6,91,19,122,4,166,23],[11,6,91,19,122,5,166,23],[12,5,91,19,123,5,165,24],[12,6,91,19,123,6,164,24],[12,6,91,19,123,7,163,25],[12,7,91,19,123,9,162,26],[12,7,91,19,124,9,161,26],[13,7,91,19,124,11,160,27],[13,7,90,20,124,13,158,29],[13,8,90,20,125,13,157,29],[14,8,90,20,125,16,154,32],[14,8,89,21,126,59],[14,9,88,21,126,59],[15,9,88,21,127,57],[15,9,87,22,128,56],[15,10,87,22,128,55],[16,10,86,23,129,53],[16,11,85,23,129,53],[16,12,84,24,130,51],[17,12,83,25,131,49],[17,13,82,25,132,47],[18,13,81,26,133,45],[18,14,79,28,134,43],[19,15,78,28,135,41],[19,16,76,30,136,39],[20,17,75,30,137,37],[20,19,72,33,139,33],[21,20,70,34,140,31],[21,22,68,36,142,27],[22,25,64,39,144,22],[23,30,58,45,147,16],[23,79],[24,77],[25,76],[26,74],[27,72],[27,71],[28,69],[29,68],[30,66],[31,64],[33,61],[34,58],[35,56],[37,53],[38,50],[40,47],[42,43],[44,39],[47,33],[51,26],[56,16],[],[],[],[],[],[],[],[],[]];
+layer('omsym',g=>{ const sc=130/200, ox=185, oy=40; for(let y=0;y<200;y++){ const r=OM_MASK[y]; for(let i=0;i<r.length;i+=2) g.fillRect(ox+r[i]*sc,oy+y*sc,r[i+1]*sc,sc+.4); } },1.1,1.1);
 // mouth parts re-aimed every frame: lips, inner mouth, Kali's tongue
 const LIPS=[];
 for(let i=0;i<150;i++){ const p=mk('lip',250,338); p.lip={up:i<75,u:(Math.random()*2-1),v:Math.random(),inner:false}; FP.push(p); LIPS.push(p); }
@@ -720,7 +723,8 @@ const statusEl=$('status');
 function showHint(msg,ms){ const h=$('hint'); h.hidden=false; h.textContent=msg; clearTimeout(showHint.t); showHint.t=setTimeout(()=>{h.hidden=true;},ms); }
 function startChant(){
   initAudio(); if(ac.state==='suspended') ac.resume();
-  if(gatherOn){ scatter(); whoosh(); }
+  if(gatherOn){ if(cur!=='om') scatter(); whoosh(); }
+  if(cur==='om') omT0=performance.now();
   started=true; chanting=true; src='synth'; $('begin').hidden=true; $('chant').setAttribute('aria-pressed','true'); chantT=0; curIdx=-1; lastWord=-1; nextDrum=0;
   statusEl.textContent=gatherOn?'Gathering...':'Chanting'; showHint('No sound? Switch off Silent mode and turn the volume up.',9000);
   setTimeout(()=>{ if(ac.state!=='running') showHint('Tap Chant again to enable sound.',9000); },500);
@@ -732,12 +736,12 @@ function stopChant(){
   if(fileAudio) fileAudio.pause();
 }
 function setMode(m){
-  if(m===cur) return; cur=m; document.documentElement.dataset.mode=m; layPH=-1; layout();
+  if(m===cur) return; cur=m; document.documentElement.dataset.mode=m; layPH=-1; layout(); if(m==='om') omT0=started?performance.now():-1;
   const M=MODES[m]; WORDS=M.words; TL=M.tl; TOTAL=M.total;
   $('ttl').textContent=M.title; $('sub').textContent=M.sub; $('begin').innerHTML=M.begin; $('meaning').textContent=M.meaning;
   for(const [id,k] of MODE_BTNS) $(id).setAttribute('aria-pressed',m===k);
   try{ $(MODE_BTNS.find(b=>b[1]===m)[0]).scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'}); }catch(e){}
-  buildWords(); markWord(-1); stopSpeech(); sp.wi=0; chantT=0; curIdx=-1; lastWord=-1; applyVoice(); refreshVoiceChip(); addRipple(1); setGyan(); if(started&&gatherOn){ scatter(); whoosh(); statusEl.textContent='Gathering...'; } else if(started) statusEl.textContent='Chanting';
+  buildWords(); markWord(-1); stopSpeech(); sp.wi=0; chantT=0; curIdx=-1; lastWord=-1; applyVoice(); refreshVoiceChip(); addRipple(1); setGyan(); if(started&&gatherOn){ if(m!=='om') scatter(); whoosh(); statusEl.textContent='Gathering...'; } else if(started) statusEl.textContent='Chanting';
   if(A) A.voiceGain.gain.setTargetAtTime(0,ac.currentTime,.05);
   if(chanting&&src==='synth'){ statusEl.textContent='Chanting'; if(m==='shiva'&&spoken) startWord(); }
 }
@@ -894,6 +898,7 @@ function frame(now){
     for(let i=0;i<48;i++){ const a=i*6.2832/48+tm*.04, lg=i%2===0, r1=175*S, r2=(lg?330+energy*60:255)*S; cx.globalAlpha=(lg?.4:.25)*wg*(.6+energy*.6);
       cx.beginPath(); cx.moveTo(hx+Math.cos(a)*r1,hy+Math.sin(a)*r1); cx.lineTo(hx+Math.cos(a)*r2,hy+Math.sin(a)*r2); cx.stroke(); }
     const hz=cx.createLinearGradient(0,H*.62,0,H); hz.addColorStop(0,'rgba(255,140,50,0)'); hz.addColorStop(1,'rgba(255,150,60,'+(.25*wg).toFixed(3)+')'); cx.globalAlpha=1; cx.fillStyle=hz; cx.fillRect(0,H*.62,W,H*.38); }
+  let OF=1; const OCY=Y0+297*S; if(cur==='om'){ const kk=omT0<0?0:Math.min(1,(performance.now()-omT0)/4600); OF=.035+.965*(1-Math.pow(1-kk,3)); }   // Om: a tiny seed that grows into eyes and lips
   if(WT.om>.02){ const wo=WT.om, L=Math.hypot(W,H)*.62, ang=-.5+Math.sin(tm*.05)*.03, ca=Math.cos(ang), sa=Math.sin(ang), ox=W*.52-px*14, oy=H*.62-py*14;   // Milky Way and neon stars
     cx.globalCompositeOperation='lighter';
     for(const [u,r,c,al] of [[-.6,.36,'90,110,255',.20],[-.25,.32,'200,90,230',.20],[0,.28,'255,215,180',.28],[.3,.34,'120,140,255',.20],[.65,.32,'255,110,210',.14]]){
@@ -908,8 +913,10 @@ function frame(now){
       if(n.z>.7){ const g=cx.createRadialGradient(x,y,0,x,y,n.r*7); g.addColorStop(0,'rgba('+n.c+','+(.5*a).toFixed(3)+')'); g.addColorStop(1,'rgba('+n.c+',0)'); cx.globalAlpha=1; cx.fillStyle=g; cx.fillRect(x-n.r*7,y-n.r*7,n.r*14,n.r*14); }
       cx.fillStyle=col; cx.globalAlpha=a; cx.fillRect(x-n.r/2,y-n.r/2,n.r,n.r); cx.fillRect(x-n.r*3,y-.4,n.r*6,.8); cx.fillRect(x-.4,y-n.r*3,.8,n.r*6); }
     { const lx=baseX, ly=Y0+348*S, R2=Math.hypot(W,H), en=Math.min(1,energy*1.2);
+      { const ox2=baseX, oy2=Y0+106*S, gr=130*S*(1+energy*.5), g=cx.createRadialGradient(ox2,oy2,0,ox2,oy2,gr); g.addColorStop(0,'rgba(255,200,130,'+(.26*wo*OF*(.7+energy*1.1)).toFixed(3)+')'); g.addColorStop(1,'rgba(255,190,120,0)'); cx.fillStyle=g; cx.globalAlpha=1; cx.fillRect(ox2-gr,oy2-gr,gr*2,gr*2); }
       for(const [gx,gy,gr,c,al] of [[baseX-58*S,Y0+246*S,70*S,'120,235,255',.2],[baseX+58*S,Y0+246*S,70*S,'120,235,255',.2],[lx,ly,90*S,'255,90,210',.26]]){   // light behind the eyes and lips
-        const g=cx.createRadialGradient(gx,gy,0,gx,gy,gr*(1+energy*.6)); g.addColorStop(0,'rgba('+c+','+(al*wo*(.7+energy*1.2)).toFixed(3)+')'); g.addColorStop(1,'rgba('+c+',0)'); cx.fillStyle=g; cx.globalAlpha=1; cx.fillRect(gx-gr*2,gy-gr*2,gr*4,gr*4); }
+        const g=cx.createRadialGradient(gx,gy,0,gx,gy,gr*(1+energy*.6)); g.addColorStop(0,'rgba('+c+','+(al*wo*OF*(.7+energy*1.2)).toFixed(3)+')'); g.addColorStop(1,'rgba('+c+',0)'); cx.fillStyle=g; cx.globalAlpha=1; cx.fillRect(gx-gr*2,gy-gr*2,gr*4,gr*4); }
+      if(OF<.995){ const sr=(26+150*(1-OF))*S*(1+.12*Math.sin(t*3)), sg=cx.createRadialGradient(baseX,OCY,0,baseX,OCY,sr); sg.addColorStop(0,'rgba(190,245,255,'+(.95*(1-OF*.6)*wo).toFixed(3)+')'); sg.addColorStop(.25,'rgba(150,120,255,'+(.4*(1-OF)*wo).toFixed(3)+')'); sg.addColorStop(1,'rgba(255,90,210,0)'); cx.fillStyle=sg; cx.globalAlpha=1; cx.fillRect(baseX-sr,OCY-sr,sr*2,sr*2); }
       if(en>.02){ const rg=cx.createRadialGradient(lx,ly,0,lx,ly,R2*.7); rg.addColorStop(0,'rgba(170,235,255,'+(.15*en*wo).toFixed(3)+')'); rg.addColorStop(1,'rgba(170,235,255,0)');   // rays from the lips
         cx.fillStyle=rg; cx.globalAlpha=1; cx.beginPath(); for(let i=0;i<48;i++){ const a=i/48*6.2832+t*.04+Math.sin(i*7.3)*.03, w=(i%3?.006:.013); cx.moveTo(lx,ly); cx.lineTo(lx+Math.cos(a-w)*R2,ly+Math.sin(a-w)*R2); cx.lineTo(lx+Math.cos(a+w)*R2,ly+Math.sin(a+w)*R2); cx.closePath(); } cx.fill(); }
       for(let i=OMW.length-1;i>=0;i--){ const age=(performance.now()-OMW[i])/1000; if(age>5){ OMW.splice(i,1); continue; }   // sound waves leave the lips with each Om
@@ -963,7 +970,7 @@ function frame(now){
   for(const kd of KINDS){
     const k=kd.k, vis=VIS[k]; if(vis<.02) continue;
     cx.fillStyle=css[k]; cx.globalCompositeOperation=GLOW[k]?'lighter':'source-over';
-    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*(1-.4*WT.om*(k==='lip'||k==='eyesS'||k==='inner'?1:0))*Math.max(.9,S*(SKIN.has(k)?.95:1))*(1+climax*.25)*(thin?1.2:1);
+    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*(cur==='om'?(.35+.65*OF):1)*(1-.4*WT.om*(k==='lip'||k==='eyesS'||k==='inner'?1:0))*Math.max(.9,S*(SKIN.has(k)?.95:1))*(1+climax*.25)*(thin?1.2:1);
     for(let i=kd.a;i<kd.b;i++){
       if(thin&&i%pq) continue;
       const p=FP[i]; let mx=p.mx,my=p.my,mz=p.mz;
@@ -977,6 +984,7 @@ function frame(now){
       let rx=mx*cy+mz*sy; const rz=-mx*sy+mz*cy, ry=my-260; let ry2=ry*cp-rz*sp2;
       if(rollA){ const ca=Math.cos(rollA*w), sa=Math.sin(rollA*w), q=ry2-120, nx=rx*ca-q*sa; ry2=rx*sa+q*ca+120; rx=nx; }
       let tx=baseX+rx*S, ty=Y0+(ry2+260)*S+breatheY*(my<430?1:.4);
+      if(cur==='om'&&OF<1){ tx=baseX+(tx-baseX)*OF; ty=OCY+(ty-OCY)*OF; }
       if(k==='trunk') tx+=Math.sin(t*1.4)*(my-236)*.03*S*(1+energy)*SW;
       if((k==='hair'||k==='hairK'||k==='beard'||k==='ribbon')&&my>150) tx+=Math.sin(t*.9+my*.012+p.ph*.15)*(my-120)*.035*S*SW;
       if(k==='hairK'&&energy>.05) tx+=(Math.random()-.5)*energy*4*S*SW;
@@ -989,6 +997,7 @@ function frame(now){
       let a;
       if(SKIN.has(k)){ const l=Math.max(0,Math.min(1,rz/100)); a=(k!=='body'?.55:.4)+.45*l+.06*Math.sin(t*1.7+p.ph); }
       else if(k==='third') a=.6+.4*Math.sin(t*2.2+p.ph)+energy*.5;
+      else if(k==='omsym') a=.5+.1*Math.sin(t*1.5+p.ph)+energy*.2;
       else if(k==='lip') a=.85-.55*WT.shiva-.3*WT.om; else if(k==='inner') a=Math.min(.8,mouthOpen*1.4)*.8; else if(k==='tongue') a=.9; else if(k==='fang') a=Math.min(1,mouthOpen*4);
       else if(k==='hairK') a=.55+.35*Math.sin(t*3+p.ph)+energy*.3;
       else if(k==='trunk'||k==='earG') a=.95;
