@@ -12,6 +12,14 @@
   color-scheme:dark;
 }
 :root[data-mode="tara"]{ --bg:#02080a; --gold:#7ee0a8; --glow:126,224,168; --line:#16352c; --dim:#8fb0a4; --fg:#e8fff3; --panel:rgba(3,12,12,.74); }
+:root[data-mode="om"]{ --bg:#02030c; --gold:#9ff0ff; --glow:130,230,255; --line:#1a2a4a; --dim:#8fa3c8; --fg:#eaf6ff; --panel:rgba(3,6,18,.72); }
+#halo{position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;z-index:60;opacity:0;transition:opacity .25s}
+#halo::before{content:"";position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;border:1.5px solid rgba(var(--glow),.95);box-shadow:0 0 16px rgba(var(--glow),.75),inset 0 0 12px rgba(var(--glow),.4);transition:transform .18s}
+#halo::after{content:"";position:absolute;left:-90px;top:-90px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(var(--glow),.22),transparent 62%);mix-blend-mode:screen}
+#halo i{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:rgba(var(--glow),1);box-shadow:0 0 8px rgba(var(--glow),1)}
+#halo.on::before{transform:scale(1.45)}#halo.down::before{transform:scale(.7)}
+@media (pointer:fine){html,body,canvas,button,.chip,label,input,.panel{cursor:none!important}}
+body.clean .hud,body.clean .modes,body.clean .panel,body.clean .hint{display:none!important}
 :root[data-mode="hanuman"]{ --bg:#080302; --gold:#ff7a2a; --glow:255,122,42; --line:#401a0c; --dim:#b0988a; --fg:#fff0e2; --panel:rgba(14,5,3,.76); }
 :root[data-mode="gayatri"]{ --bg:#05040e; --gold:#ffb347; --glow:255,179,71; --line:#3a2a1c; --dim:#a8a2a0; --fg:#fff3de; --panel:rgba(10,6,16,.74); }
 :root[data-mode="ganesha"]{ --bg:#07030a; --gold:#ff8f4a; --glow:255,143,74; --line:#3a1c1c; --dim:#b09a9a; --fg:#fff0e4; --panel:rgba(14,5,10,.74); }
@@ -133,6 +141,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
   <button class="chip" id="mGn" type="button" aria-pressed="false">Ganesha</button>
   <button class="chip" id="mT" type="button" aria-pressed="false">Tara</button>
   <button class="chip" id="mH" type="button" aria-pressed="false">Hanuman</button>
+  <button class="chip" id="mO" type="button" aria-pressed="false">Om</button>
 </div>
 <div class="panel">
   <div class="words" id="words" aria-live="off"></div>
@@ -210,6 +219,10 @@ const WORDS_H=[
  {d:'हनुमते',l:'Hanumate',s:[['ha','a',.8,0,0,.45],['nu','u',.4,.9,0,.45],['ma','a',.8,0,1,.45],['te','e',.5,0,0,.7]]},
  {d:'नमः',l:'Namah',s:[['na','a',.8,0,0,.5],['mah','a',.85,0,1,1.2]]}
 ];
+// Om: one long, simple chant. The lips round for O, then close into the hum of M.
+const WORDS_O=[
+ {d:'ॐ',l:'Om',s:[['o','o',.6,1,0,3.4],['m','m',0,0,1,3.8]]}
+];
 function buildTL(words,pause){ const tl=[]; let T=0;
   words.forEach((w,wi)=>{ w.first=tl.length; w.sumD=0; w.sc=.7;
     w.s.forEach(([tx,v,o,r,lab,d])=>{ tl.push({tx,v,o,r,lab,t0:T,t1:T+d,wi}); T+=d; w.sumD+=d; });
@@ -239,7 +252,10 @@ const MODES={
    meaning:'Tara is revered as an embodiment of compassion and swift help, especially in Tibetan Buddhism. The mantra calls on her as the one who liberates and closes with "svaha", "so be it".'},
  hanuman:{words:WORDS_H,pause:{0:.15,1:.2,2:.18,3:1.8},title:'Hanuman',sub:'ॐ हँ हनुमते नमः',begin:'हँ &nbsp;Begin the chant',
    gyan:'हनुमान जी श्रीराम के परम भक्त हैं और बल, साहस तथा निष्ठा के प्रतीक माने जाते हैं।\nभक्त उनके स्मरण के लिए इस मन्त्र को श्रद्धा से जपते हैं।\nHanuman is honoured for strength, courage and devotion to Rama; devotees chant this mantra in his remembrance.',
-   meaning:'Om, salutations to Hanuman. Ham is his seed sound. He is honoured as an ideal of strength, courage and devotion to Rama.'}
+   meaning:'Om, salutations to Hanuman. Ham is his seed sound. He is honoured as an ideal of strength, courage and devotion to Rama.'},
+ om:{words:WORDS_O,pause:{0:1.8},title:'Om',sub:'ॐ',begin:'ॐ &nbsp;Begin the chant',
+   gyan:'ॐ को हिन्दू, बौद्ध और जैन परम्पराओं में पवित्र ध्वनि माना जाता है।\nइसे शान्ति और एकाग्रता की भावना से जपा जाता है।\nOm is regarded as a sacred sound in Hindu, Buddhist and Jain traditions, chanted with calm and focus.',
+   meaning:'Om (Aum) is a sacred syllable in Hindu, Buddhist and Jain traditions, often chanted at the start and end of prayer and meditation.'}
 };
 for(const k in MODES) Object.assign(MODES[k],buildTL(MODES[k].words,MODES[k].pause));
 // Shiva has two chants: Mahamrityunjaya (default) and Om Namah Shivaya
@@ -248,8 +264,8 @@ const SHIVA_VARS=[ {label:'Mahamrityunjaya',words:MODES.shiva.words,pause:MODES.
     gyan:'पञ्चाक्षर मन्त्र शैव परम्परा में भगवान शिव को नमन का मन्त्र है।\nइसे सरल श्रद्धा और मन की स्थिरता के भाव से जपा जाता है।\nThe five-syllable Shaiva mantra of homage to Shiva, chanted with simple devotion and a steady mind.',
     meaning:'I bow to Shiva. The five syllables Na, Mah, Shi, Va, Ya are known as the Panchakshara, the five-syllable mantra.'},{}) ];
 Object.assign(SHIVA_VARS[1],buildTL(WORDS_N,SHIVA_VARS[1].pause)); let shivaVar=0;
-const MODEKEYS=['shiva','kali','bhairav','monk','gayatri','ganesha','tara','hanuman'];
-const MODE_BTNS=[['mS','shiva'],['mK','kali'],['mB','bhairav'],['mM','monk'],['mGa','gayatri'],['mGn','ganesha'],['mT','tara'],['mH','hanuman']];
+const MODEKEYS=['shiva','kali','bhairav','monk','gayatri','ganesha','tara','hanuman','om'];
+const MODE_BTNS=[['mS','shiva'],['mK','kali'],['mB','bhairav'],['mM','monk'],['mGa','gayatri'],['mGn','ganesha'],['mT','tara'],['mH','hanuman'],['mO','om']];
 let cur='shiva', WORDS=MODES.shiva.words, TL=MODES.shiva.tl, TOTAL=MODES.shiva.total;
 
 let wordEls=[];
@@ -272,12 +288,12 @@ function mouthTarget(s,t){
 
 /* ================= 2. Audio: voice, spoken Sanskrit, drone, bowl, drum ================= */
 let ac=null, A=null, droneOn=true, choirOn=false, overtoneOn=false;
-const VOICEP={shiva:[2600,.3,1.6,9],kali:[3800,.6,4,5],bhairav:[3200,.85,6,6],monk:[2000,.9,1.2,10],gayatri:[2600,.3,2,9],ganesha:[2800,.5,3,8],tara:[2800,.25,2.4,9],hanuman:[3400,.6,3,6]};
-const BASEP={kali:130.8,bhairav:98,monk:87.3,gayatri:123.5,ganesha:110,tara:196,hanuman:110};
+const VOICEP={shiva:[2600,.3,1.6,9],kali:[3800,.6,4,5],bhairav:[3200,.85,6,6],monk:[2000,.9,1.2,10],gayatri:[2600,.3,2,9],ganesha:[2800,.5,3,8],tara:[2800,.25,2.4,9],hanuman:[3400,.6,3,6],om:[1700,.95,1.3,10]};
+const BASEP={kali:130.8,bhairav:98,monk:87.3,gayatri:123.5,ganesha:110,tara:196,hanuman:110,om:82.4};
 const OT_SEQ=[8,9,10,12,10,9];
 const DRUMI={kali:.86,bhairav:.62,hanuman:.5};
 const FORM={a:[750,1200,2600],e:[480,1800,2600],i:[300,2300,3000],o:[500,900,2600],u:[320,800,2500],m:[250,1100,2400]};
-const DRONES={shiva:[73.4,110,146.8,220,293.7,440],kali:[65.4,98,130.8,155.6,196,311],bhairav:[98,146.8,196,293.7,392,587],monk:[87.3,130.8,174.6,261.6,349.2,523.3],gayatri:[123.5,185,247,370,494,740],ganesha:[110,165,220,330,440,660],tara:[98,147,196,294,392,588],hanuman:[110,165,220,330,440,660]};
+const DRONES={shiva:[73.4,110,146.8,220,293.7,440],kali:[65.4,98,130.8,155.6,196,311],bhairav:[98,146.8,196,293.7,392,587],monk:[87.3,130.8,174.6,261.6,349.2,523.3],gayatri:[123.5,185,247,370,494,740],ganesha:[110,165,220,330,440,660],tara:[98,147,196,294,392,588],hanuman:[110,165,220,330,440,660],om:[41.2,82.4,123.5,164.8,247,329.6]};
 function unlockIOS(){   // iOS mutes Web Audio on the silent switch unless a media element is playing
   try{ const sr=8000,n=sr,buf=new ArrayBuffer(44+n*2),v=new DataView(buf),ws=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i));};
     ws(0,'RIFF');v.setUint32(4,36+n*2,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
@@ -401,11 +417,12 @@ let tm=0;   // cosmic clock: runs slower under reduced motion
 const MW=500, MH=700, HC={x:250,y:260,rx:105,ry:135};
 function layout(){
   const nd=Math.min(devicePixelRatio||1,QL>=2?1.25:QL>=1?1.5:2), nw=innerWidth, nh=innerHeight;
-  const ph=(document.querySelector('.panel')||{}).offsetHeight||150; if(nw===W&&nh===H&&nd===DPR&&layoutV&&ph===layPH) return; layPH=ph;   // address-bar jitter and duplicate resize events
+  const ph=document.body.classList.contains('clean')?0:((document.querySelector('.panel')||{}).offsetHeight||150); if(nw===W&&nh===H&&nd===DPR&&layoutV&&ph===layPH) return; layPH=ph;   // address-bar jitter and duplicate resize events
   DPR=nd; W=nw; H=nh; layoutV++;
   cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cx.setTransform(DPR,0,0,DPR,0,0);
   if(H>W*1.1){ const top=70, uiTop=H-Math.min(ph,H*.28)-140; S=Math.max(.5,Math.min(W*.0025,(uiTop-top)/((H<700?470:560)-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE phone: whole head and neck above the Begin button
   else { const top=76, uiTop=H-ph-24-62; S=Math.max(.45,Math.min(H/700*1.05,(uiTop-top)/(560-30))); Y0=top-30*S; FADE=uiTop; }   // SAMPLE: figure fits between top bar and the strip, neck visible
+  if(cur==='om'){ S=Math.min(H/700*1.45,W*.0040); Y0=H*.44-300*S; FADE=1e9; }
   baseX=W/2; hx=baseX; hy=Y0+250*S; FADE0=Math.max(FADE-120,Y0+440*S);   // the face and neck are never faded
 }
 let layT=0; function layoutSoon(){ if(layT) return; layT=requestAnimationFrame(()=>{ layT=0; layout(); }); }
@@ -419,6 +436,7 @@ function makeNebula(cols){ const c=document.createElement('canvas'); c.width=c.h
     g.fillStyle=gr; g.fillRect(x-r,y-r,r*2,r*2); } return c; }
 const NEB_S=makeNebula([[110,50,210],[40,110,230],[220,60,160],[30,180,190],[150,70,240]]);
 const NEB_T=makeNebula([[40,160,120],[20,100,110],[120,200,150],[200,220,120],[30,70,100]]);
+const NEB_O=makeNebula([[70,90,255],[190,70,220],[40,170,255],[255,90,200],[20,40,120]]);
 const NEB_H=makeNebula([[255,110,30],[200,50,20],[255,170,60],[90,20,10],[255,80,40]]);
 const NEB_G=makeNebula([[255,170,70],[200,80,120],[60,60,150],[255,200,120],[120,60,140]]);
 const NEB_N=makeNebula([[255,120,70],[200,50,90],[255,190,90],[120,40,80],[255,150,120]]);
@@ -430,16 +448,23 @@ const STARS=[]; for(let i=0;i<1500;i++){ const z=.15+Math.random()*.85, tone=Mat
   STARS.push({a:Math.random()*6.283,r:Math.pow(Math.random(),.7)*1.15,z,s:z>.85?1.8:1.1,tw:Math.random()*6.28,
     css:tone<.6?'rgb(235,240,255)':tone<.85?'rgb(190,205,255)':'rgb(255,225,180)'}); }
 STARS.sort((a,b)=>a.css<b.css?-1:a.css>b.css?1:0);
+const OMW=[], SHOOT=[]; let nextShoot=0;
+const MWP=[]; for(let i=0;i<9000;i++){ const u=(Math.random()+Math.random()+Math.random()-1.5)/1.5, v=(Math.random()+Math.random()+Math.random()+Math.random()-2)*.07*(1-.5*Math.abs(u));
+  const core=Math.max(0,1-Math.abs(v)*9)*Math.max(0,1-Math.abs(u)*1.1), tier=core>.6?0:core>.3?1:Math.random()<.5?2:3;
+  MWP.push({u,v,tier,a:.25+Math.random()*.6*(.4+core),s:Math.random()<.08?2.2:1.1}); }
+MWP.sort((a,b)=>a.tier-b.tier);
+const MWC=['rgb(255,236,214)','rgb(200,215,255)','rgb(170,150,255)','rgb(255,150,220)'];
+const NEON=[]; { const cs=[[90,255,240],[255,80,210],[150,110,255],[110,200,255]]; for(let i=0;i<90;i++){ const z=.2+Math.random()*.8; NEON.push({fx:Math.random(),fy:Math.random(),z,c:cs[i%4],tw:Math.random()*6.28,r:1.6+z*1.8}); } }
 function GALC(k){ const q=k<.22?0:k<.6?1:2;
   const P={shiva:[[255,215,150],[150,170,255],[190,110,255]],kali:[[255,200,120],[255,70,60],[170,20,70]],bhairav:[[255,150,60],[70,100,190],[100,70,160]],monk:[[255,205,120],[220,170,90],[120,110,170]],
-    gayatri:[[255,235,170],[255,170,80],[200,100,120]],ganesha:[[255,190,110],[255,130,90],[200,90,110]],tara:[[220,255,230],[90,220,160],[60,150,170]],hanuman:[[255,200,100],[255,110,40],[180,50,30]]};
+    gayatri:[[255,235,170],[255,170,80],[200,100,120]],ganesha:[[255,190,110],[255,130,90],[200,90,110]],tara:[[220,255,230],[90,220,160],[60,150,170]],hanuman:[[255,200,100],[255,110,40],[180,50,30]],om:[[160,230,255],[140,120,255],[255,100,210]]};
   const o={}; for(const m in P) o[m]='rgb('+P[m][q]+')'; return o; }
 const GAL=[]; for(let i=0;i<3600;i++){ const rn=Math.pow(Math.random(),.65); GAL.push({arm:i%3,rn,j:(Math.random()-.5)*2,cs:GALC(rn),sz:rn<.2?2:1.3}); }
 GAL.sort((a,b)=>a.rn-b.rn);   // colour bands are by radius, so this batches fillStyle
-const GALF={shiva:1,kali:1,bhairav:.5,monk:1,gayatri:.6,ganesha:1,tara:1,hanuman:.8}, GALD={kali:-1.5,bhairav:-.7};
-const NEBS={shiva:NEB_S,kali:NEB_K,bhairav:NEB_B,monk:NEB_M,gayatri:NEB_G,ganesha:NEB_N,tara:NEB_T,hanuman:NEB_H};
-const RIP={shiva:['#ffd98a','#a9b8ff'],kali:['#ff6a5a','#c01030'],bhairav:['#ffae5a','#6a7cff'],monk:['#ffe08a','#fff2c8'],gayatri:['#ffe08a','#fff2c8'],ganesha:['#ffe08a','#fff2c8'],tara:['#9ff0c0','#d8ffe8'],hanuman:['#ff9a4a','#c04010']};
-const BLOOM={shiva:'255,215,150',kali:'255,60,50',bhairav:'255,160,60',monk:'255,235,170',gayatri:'255,235,170',ganesha:'255,190,110',tara:'190,255,215',hanuman:'255,150,60'};
+const GALF={shiva:1,kali:1,bhairav:.5,monk:1,gayatri:.6,ganesha:1,tara:1,hanuman:.8,om:0}, GALD={kali:-1.5,bhairav:-.7};
+const NEBS={shiva:NEB_S,kali:NEB_K,bhairav:NEB_B,monk:NEB_M,gayatri:NEB_G,ganesha:NEB_N,tara:NEB_T,hanuman:NEB_H,om:NEB_O};
+const RIP={om:['#9ff0ff','#ff80e0'],shiva:['#ffd98a','#a9b8ff'],kali:['#ff6a5a','#c01030'],bhairav:['#ffae5a','#6a7cff'],monk:['#ffe08a','#fff2c8'],gayatri:['#ffe08a','#fff2c8'],ganesha:['#ffe08a','#fff2c8'],tara:['#9ff0c0','#d8ffe8'],hanuman:['#ff9a4a','#c04010']};
+const BLOOM={om:'0,0,0',shiva:'255,215,150',kali:'255,60,50',bhairav:'255,160,60',monk:'255,235,170',gayatri:'255,235,170',ganesha:'255,190,110',tara:'190,255,215',hanuman:'255,150,60'};
 const EMC={monk:'#ffe3a0',gayatri:'#ffe3a0',tara:'#9ff0c0'};
 const NEBL=MODEKEYS.map(m=>NEBS[m]);   // no per-frame array building
 const EMB=[]; for(let i=0;i<140;i++) EMB.push({x:Math.random(),y0:Math.random()*900,v:.5+Math.random()*1.5,o:Math.random()*100,f:.5+Math.random(),a:.3+Math.random()*.6,s:1+Math.random()*1.6,c:Math.random()<.6?'#ff8a2a':'#ffd27a'});
@@ -465,6 +490,7 @@ for(const m of ['shiva','kali','bhairav','monk']){ const c=COLS[m]; c.hoop=c.ear
 COLS.gayatri={face:[240,196,150],body:[255,176,76],ear:[240,196,150],nose:[244,206,166],eyes:[255,222,170],lip:[232,124,112],inner:[255,150,100],urna:[255,230,150],mala:[255,215,120],beard:[238,238,250],bun:[226,226,240]};
 COLS.ganesha={face:[255,152,76],body:[214,96,52],eyes:[255,232,176],lip:[255,120,90],inner:[255,160,100],urna:[255,240,200],mala:[255,196,90],earG:[255,128,64],trunk:[255,168,96],tusk:[255,250,236],kirita:[255,206,92]};
 COLS.tara={face:[120,214,160],body:[60,150,110],hair:[120,205,165],ear:[120,214,160],hoop:[255,215,120],nose:[150,226,184],eyes:[220,255,230],lip:[255,150,140],inner:[255,170,120],urna:[255,235,160],mala:[255,222,140],tiara:[255,215,120],beads:[255,222,140],pendant:[90,255,190],lotusB:[255,190,220],ribbon:[190,255,225]};
+COLS.om={face:[140,240,255],eyesS:[140,240,255],lip:[255,90,210],inner:[255,150,235],tongue:[255,120,220]};
 COLS.hanuman={face:[255,112,52],faceH:[255,112,52],browH:[255,226,176],pecs:[255,184,112],snout:[255,168,104],tilak:[255,238,205],sindoor:[255,64,40],gada:[240,190,110],jaw:[255,150,90],body:[240,98,52],ear:[255,130,70],nose:[255,160,110],eyes:[255,226,176],lip:[190,68,52],inner:[110,60,40],urna:[255,235,200],mala:[255,200,100],muzzle:[255,176,118],cheek:[255,150,90],mace:[240,190,110],fur:[255,140,70],kirita:[255,210,100]};
 COLS.shiva.faceH=COLS.shiva.face; COLS.shiva.browH=COLS.shiva.eyes;
 { const ALLK=new Set(); Object.values(COLS).forEach(c=>Object.keys(c).forEach(k=>ALLK.add(k)));
@@ -478,7 +504,8 @@ const GAY_K=new Set(['body','face','ear','nose','eyes','lip','inner','urna','mal
 const GAN_K=new Set(['body','face','eyes','lip','inner','urna','mala','earG','trunk','tusk','kirita']);
 const TARA_K=new Set(['body','face','ear','hoop','nose','eyes','lip','inner','urna','mala','hair','tiara','beads','pendant','lotusB','ribbon']);
 const HAN_K=new Set(['body','faceH','jaw','ear','nose','browH','pecs','eyes','lip','inner','snout','tilak','sindoor','mala','cheek','gada','fur','kirita']);
-const SETS={shiva:SHIVA_K,kali:KALI_K,bhairav:BHAI_K,monk:MONK_K,gayatri:GAY_K,ganesha:GAN_K,tara:TARA_K,hanuman:HAN_K};
+const OM_K=new Set(['eyesS','lip','inner']);
+const SETS={om:OM_K,shiva:SHIVA_K,kali:KALI_K,bhairav:BHAI_K,monk:MONK_K,gayatri:GAY_K,ganesha:GAN_K,tara:TARA_K,hanuman:HAN_K};
 const GLOW={third:1,moon:1,lip:1,inner:1,pendant:1,tongue:1,eyeK:1};
 const PRI={body:0,moon:0,hair:1,hairK:1,face:2,crown:3,beads:3,skull:3,ear:3,eyes:4,eyeK:4,nose:4,third:5,pendant:5,inner:6,lip:7,tongue:8,ash:4,trident:0,fang:7,hoop:3,ush:3,urna:5,robe:1,mala:3,bun:3,tiara:3,lotusB:4,ribbon:1,muzzle:4,cheek:4,mace:0,fur:1,hat:3,skirt:0,beard:4,earG:1,trunk:4,tusk:5,kirita:3,faceM:2,faceH:2,eyesS:4,noseS:4,jaw:4,cobra:5,pecs:4,browH:4,ganga:5,rudra:5,cobra2:5,snout:3,tilak:5,sindoor:6,gada:0};
 const TILT0=.12; const SKIN=new Set(['face','faceM','faceH','body']);
@@ -618,7 +645,7 @@ layer('eyesS',g=>{ for(const s of [-1,1]){ const X=x=>250+s*x;
   g.lineWidth=11; g.beginPath(); g.moveTo(X(12),226); g.quadraticCurveTo(X(52),214,X(100),232); g.stroke();       // heavy straight brow
   g.lineWidth=7; g.beginPath(); g.moveTo(X(24),250); g.quadraticCurveTo(X(58),234,X(94),252); g.stroke();       // drooping upper lid, eyes nearly closed
   g.lineWidth=2.5; g.beginPath(); g.moveTo(X(30),256); g.quadraticCurveTo(X(58),262,X(88),256); g.stroke();     // soft lower lid
-  g.lineWidth=2; g.beginPath(); g.moveTo(X(34),268); g.quadraticCurveTo(X(58),276,X(86),268); g.stroke(); } },2,2);
+  g.lineWidth=2; g.beginPath(); g.moveTo(X(34),268); g.quadraticCurveTo(X(58),276,X(86),268); g.stroke(); } },1.4,1.4);
 layer('noseS',g=>{ g.lineWidth=5; g.beginPath(); g.moveTo(240,236); g.lineTo(236,296); g.moveTo(260,236); g.lineTo(264,296); g.stroke();
   g.lineWidth=4; g.beginPath(); g.moveTo(216,308); g.quadraticCurveTo(232,328,250,320); g.quadraticCurveTo(268,328,284,308); g.stroke();
   g.lineWidth=2.5; g.beginPath(); g.moveTo(226,326); g.quadraticCurveTo(250,336,274,326); g.stroke(); },2,2);
@@ -681,7 +708,7 @@ addEventListener('pointerdown',e=>{ if(e.target.closest('.hud,.panel,.begin,.mod
 
 let started=false, chanting=false, chantT=0, curIdx=-1, src='synth', nextDrum=0;
 let mouthOpen=0, mouthRound=0, energy=0, rollA=0, yaw=0, pitch=0, stage=0, lastWord=-1, km=0, assembling=false, stageRate=.42;
-const WT={shiva:1,kali:0,bhairav:0,monk:0,gayatri:0,ganesha:0,tara:0,hanuman:0};
+const WT={shiva:1,kali:0,bhairav:0,monk:0,gayatri:0,ganesha:0,tara:0,hanuman:0,om:0};
 let gatherOn=true;
 // Every chant starts with the figure blown apart and spiralling back together.
 function scatter(){ const R=Math.max(W,H)*(RM.matches?.28:.75); for(const p of FP){ const a=Math.random()*6.283, r=R*(.7+Math.random()*.9);
@@ -705,7 +732,7 @@ function stopChant(){
   if(fileAudio) fileAudio.pause();
 }
 function setMode(m){
-  if(m===cur) return; cur=m; document.documentElement.dataset.mode=m;
+  if(m===cur) return; cur=m; document.documentElement.dataset.mode=m; layPH=-1; layout();
   const M=MODES[m]; WORDS=M.words; TL=M.tl; TOTAL=M.total;
   $('ttl').textContent=M.title; $('sub').textContent=M.sub; $('begin').innerHTML=M.begin; $('meaning').textContent=M.meaning;
   for(const [id,k] of MODE_BTNS) $(id).setAttribute('aria-pressed',m===k);
@@ -715,6 +742,14 @@ function setMode(m){
   if(chanting&&src==='synth'){ statusEl.textContent='Chanting'; if(m==='shiva'&&spoken) startWord(); }
 }
 for(const [id,m] of MODE_BTNS) $(id).onclick=()=>setMode(m);
+{ const h=document.createElement('div'); h.id='halo'; h.innerHTML='<i></i>'; document.body.appendChild(h);   // the cursor is a glowing halo
+  let ax=-99, ay=-99, bx=-99, by=-99, vis=0;
+  addEventListener('pointermove',e=>{ bx=e.clientX; by=e.clientY; vis=1; if(ax<0){ ax=bx; ay=by; } h.classList.toggle('on',!!(e.target.closest&&e.target.closest('button,.chip,label,input'))); });
+  addEventListener('pointerdown',e=>{ bx=e.clientX; by=e.clientY; if(ax<0){ ax=bx; ay=by; } vis=1; h.classList.add('down'); });
+  for(const ev of ['pointerup','pointercancel']) addEventListener(ev,e=>{ h.classList.remove('down'); if(e.pointerType==='touch') setTimeout(()=>{ vis=0; },500); });
+  document.documentElement.addEventListener('mouseleave',()=>{ vis=0; });
+  (function tick(){ const k=matchMedia('(prefers-reduced-motion:reduce)').matches?1:.24; ax+=(bx-ax)*k; ay+=(by-ay)*k; h.style.transform='translate3d('+ax+'px,'+ay+'px,0)'; h.style.opacity=vis; requestAnimationFrame(tick); })(); }
+try{ const qp=new URLSearchParams(location.search), mm=qp.get('mode'); if(qp.has('clean')){ document.body.classList.add('clean'); layPH=-1; layout(); } if(mm&&MODES[mm]) setMode(mm); }catch(e){}   // ?mode=om&clean for a clean recording
 $('meaning').textContent=MODES.shiva.meaning;
 $('begin').onclick=startChant;
 $('chant').onclick=()=>{ if(!started||!chanting){ startChant(); } else stopChant(); };
@@ -794,8 +829,8 @@ function frame(now){
     for(let i=0;i<TL.length;i++){ if(tt>=TL[i].t0&&tt<TL[i].t1){ s=TL[i]; idx=i; break; } }
     if(idx!==curIdx){ curIdx=idx;
       if(s){ const pch=s.tx==='taat'?.9:s.tx==='nam'?.95:s.tx==='om'?.89:1;
-        if((cur==='shiva'||cur==='monk'||cur==='gayatri'||cur==='ganesha'||cur==='tara')&&idx===0) bowl(); if((cur==='kali'&&s.tx==='kr')||(cur==='bhairav'&&s.tx==='bh')){ burst(); addRipple(1); }
-        setVowel(s.v,pch); if(cur==='shiva') addRipple(s.o*.5);
+        if((cur==='shiva'||cur==='monk'||cur==='gayatri'||cur==='ganesha'||cur==='tara'||cur==='om')&&idx===0) bowl(); if((cur==='kali'&&s.tx==='kr')||(cur==='bhairav'&&s.tx==='bh')){ burst(); addRipple(1); }
+        setVowel(s.v,pch); if(cur==='shiva') addRipple(s.o*.5); else if(cur==='om'&&s.tx==='o'){ addRipple(1); OMW.push(performance.now()); }
         if(s.wi!==lastWord){ lastWord=s.wi; markWord(s.wi); statusEl.textContent='Chanting // '+WORDS[s.wi].l; } }
       else { markWord(-1); lastWord=-1; } }
     tgt=mouthTarget(s,tt);
@@ -859,6 +894,34 @@ function frame(now){
     for(let i=0;i<48;i++){ const a=i*6.2832/48+tm*.04, lg=i%2===0, r1=175*S, r2=(lg?330+energy*60:255)*S; cx.globalAlpha=(lg?.4:.25)*wg*(.6+energy*.6);
       cx.beginPath(); cx.moveTo(hx+Math.cos(a)*r1,hy+Math.sin(a)*r1); cx.lineTo(hx+Math.cos(a)*r2,hy+Math.sin(a)*r2); cx.stroke(); }
     const hz=cx.createLinearGradient(0,H*.62,0,H); hz.addColorStop(0,'rgba(255,140,50,0)'); hz.addColorStop(1,'rgba(255,150,60,'+(.25*wg).toFixed(3)+')'); cx.globalAlpha=1; cx.fillStyle=hz; cx.fillRect(0,H*.62,W,H*.38); }
+  if(WT.om>.02){ const wo=WT.om, L=Math.hypot(W,H)*.62, ang=-.5+Math.sin(tm*.05)*.03, ca=Math.cos(ang), sa=Math.sin(ang), ox=W*.52-px*14, oy=H*.62-py*14;   // Milky Way and neon stars
+    cx.globalCompositeOperation='lighter';
+    for(const [u,r,c,al] of [[-.6,.36,'90,110,255',.20],[-.25,.32,'200,90,230',.20],[0,.28,'255,215,180',.28],[.3,.34,'120,140,255',.20],[.65,.32,'255,110,210',.14]]){
+      const gx=ox+u*L*ca, gy=oy+u*L*sa, gr=r*L*.5, g=cx.createRadialGradient(gx,gy,0,gx,gy,gr); g.addColorStop(0,'rgba('+c+','+(al*wo*(1+energy*1.2)).toFixed(3)+')'); g.addColorStop(1,'rgba('+c+',0)');
+      cx.globalAlpha=1; cx.fillStyle=g; cx.fillRect(gx-gr,gy-gr,gr*2,gr*2); }
+    cx.globalCompositeOperation='source-over';
+    for(let i=-3;i<=3;i++){ const u=i*.16, gx=ox+u*L*ca-sa*L*.03, gy=oy+u*L*sa+ca*L*.03, gr=L*.07, g=cx.createRadialGradient(gx,gy,0,gx,gy,gr); g.addColorStop(0,'rgba(2,3,12,'+(.3*wo).toFixed(3)+')'); g.addColorStop(1,'rgba(2,3,12,0)'); cx.globalAlpha=1; cx.fillStyle=g; cx.fillRect(gx-gr,gy-gr,gr*2,gr*2); }
+    cx.globalCompositeOperation='lighter'; let lt=-1;
+    for(let mi=0;mi<MWP.length;mi+=qs){ const m=MWP[mi]; const x=ox+m.u*L*ca-m.v*L*sa, y=oy+m.u*L*sa+m.v*L*ca; if(x<-3||x>W+3||y<-3||y>H+3) continue;
+      if(m.tier!==lt){ lt=m.tier; cx.fillStyle=MWC[lt]; } cx.globalAlpha=Math.min(1,m.a*1.5)*wo*(.75+.25*Math.sin(t*.8+m.u*40)); cx.fillRect(x,y,m.s*1.15,m.s*1.15); }
+    for(const n of NEON){ const x=n.fx*W-px*30*n.z, y=n.fy*H-py*30*n.z, a=(.55+.45*Math.sin(t*(1+n.z*1.6)+n.tw))*wo, col='rgb('+n.c+')';
+      if(n.z>.7){ const g=cx.createRadialGradient(x,y,0,x,y,n.r*7); g.addColorStop(0,'rgba('+n.c+','+(.5*a).toFixed(3)+')'); g.addColorStop(1,'rgba('+n.c+',0)'); cx.globalAlpha=1; cx.fillStyle=g; cx.fillRect(x-n.r*7,y-n.r*7,n.r*14,n.r*14); }
+      cx.fillStyle=col; cx.globalAlpha=a; cx.fillRect(x-n.r/2,y-n.r/2,n.r,n.r); cx.fillRect(x-n.r*3,y-.4,n.r*6,.8); cx.fillRect(x-.4,y-n.r*3,.8,n.r*6); }
+    { const lx=baseX, ly=Y0+348*S, R2=Math.hypot(W,H), en=Math.min(1,energy*1.2);
+      for(const [gx,gy,gr,c,al] of [[baseX-58*S,Y0+246*S,70*S,'120,235,255',.2],[baseX+58*S,Y0+246*S,70*S,'120,235,255',.2],[lx,ly,90*S,'255,90,210',.26]]){   // light behind the eyes and lips
+        const g=cx.createRadialGradient(gx,gy,0,gx,gy,gr*(1+energy*.6)); g.addColorStop(0,'rgba('+c+','+(al*wo*(.7+energy*1.2)).toFixed(3)+')'); g.addColorStop(1,'rgba('+c+',0)'); cx.fillStyle=g; cx.globalAlpha=1; cx.fillRect(gx-gr*2,gy-gr*2,gr*4,gr*4); }
+      if(en>.02){ const rg=cx.createRadialGradient(lx,ly,0,lx,ly,R2*.7); rg.addColorStop(0,'rgba(170,235,255,'+(.15*en*wo).toFixed(3)+')'); rg.addColorStop(1,'rgba(170,235,255,0)');   // rays from the lips
+        cx.fillStyle=rg; cx.globalAlpha=1; cx.beginPath(); for(let i=0;i<48;i++){ const a=i/48*6.2832+t*.04+Math.sin(i*7.3)*.03, w=(i%3?.006:.013); cx.moveTo(lx,ly); cx.lineTo(lx+Math.cos(a-w)*R2,ly+Math.sin(a-w)*R2); cx.lineTo(lx+Math.cos(a+w)*R2,ly+Math.sin(a+w)*R2); cx.closePath(); } cx.fill(); }
+      for(let i=OMW.length-1;i>=0;i--){ const age=(performance.now()-OMW[i])/1000; if(age>5){ OMW.splice(i,1); continue; }   // sound waves leave the lips with each Om
+        const k=age/5, r=age*R2*.2+20, fa=Math.pow(1-k,1.7)*wo;
+        cx.lineWidth=2+(1-k)*9; cx.globalAlpha=fa*.75; cx.strokeStyle='rgb(120,235,255)'; cx.beginPath(); cx.arc(lx,ly,r,0,6.2832); cx.stroke();
+        cx.lineWidth=1.5+(1-k)*5; cx.globalAlpha=fa*.55; cx.strokeStyle='rgb(255,100,215)'; cx.beginPath(); cx.arc(lx,ly,r*.86,0,6.2832); cx.stroke(); }
+      if(t>nextShoot){ nextShoot=t+3.5+Math.random()*4; SHOOT.push({t0:t,x:W*(.35+Math.random()*.6),y:H*Math.random()*.35}); }
+      for(let i=SHOOT.length-1;i>=0;i--){ const o=SHOOT[i], age=t-o.t0; if(age>1.1){ SHOOT.splice(i,1); continue; }
+        const hx3=o.x-.84*900*age, hy3=o.y+.54*900*age, len=240*(1-age/1.1), g=cx.createLinearGradient(hx3,hy3,hx3+.84*len,hy3-.54*len); g.addColorStop(0,'rgba(220,245,255,'+(.9*wo).toFixed(3)+')'); g.addColorStop(1,'rgba(160,200,255,0)');
+        cx.strokeStyle=g; cx.lineWidth=2; cx.globalAlpha=1; cx.beginPath(); cx.moveTo(hx3,hy3); cx.lineTo(hx3+.84*len,hy3-.54*len); cx.stroke(); }
+      cx.globalCompositeOperation='source-over'; const vg=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.32,W/2,H/2,R2*.62); vg.addColorStop(0,'rgba(0,0,8,0)'); vg.addColorStop(1,'rgba(0,0,8,'+(.62*wo).toFixed(3)+')'); cx.fillStyle=vg; cx.globalAlpha=1; cx.fillRect(0,0,W,H); }
+    cx.globalCompositeOperation='source-over'; cx.globalAlpha=1; }
   if(WT.hanuman>.02){ const wh=WT.hanuman;   // dusk fire and a ring of flame
     const f2=cx.createRadialGradient(hx,hy,0,hx,hy,280*S); f2.addColorStop(0,'rgba(255,130,40,'+((.22+energy*.3)*wh).toFixed(3)+')'); f2.addColorStop(.55,'rgba(255,70,20,'+((.09+energy*.12)*wh).toFixed(3)+')'); f2.addColorStop(1,'rgba(120,20,5,0)');
     cx.globalAlpha=1; cx.fillStyle=f2; cx.fillRect(hx-300*S,hy-300*S,600*S,600*S);
@@ -900,7 +963,7 @@ function frame(now){
   for(const kd of KINDS){
     const k=kd.k, vis=VIS[k]; if(vis<.02) continue;
     cx.fillStyle=css[k]; cx.globalCompositeOperation=GLOW[k]?'lighter':'source-over';
-    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*Math.max(.9,S*(SKIN.has(k)?.95:1))*(1+climax*.25)*(thin?1.2:1);
+    const thin=pq>1&&DENSE.has(k), sz=SIZE[k]*(1-.4*WT.om*(k==='lip'||k==='eyesS'||k==='inner'?1:0))*Math.max(.9,S*(SKIN.has(k)?.95:1))*(1+climax*.25)*(thin?1.2:1);
     for(let i=kd.a;i<kd.b;i++){
       if(thin&&i%pq) continue;
       const p=FP[i]; let mx=p.mx,my=p.my,mz=p.mz;
@@ -926,7 +989,7 @@ function frame(now){
       let a;
       if(SKIN.has(k)){ const l=Math.max(0,Math.min(1,rz/100)); a=(k!=='body'?.55:.4)+.45*l+.06*Math.sin(t*1.7+p.ph); }
       else if(k==='third') a=.6+.4*Math.sin(t*2.2+p.ph)+energy*.5;
-      else if(k==='lip') a=.85-.55*WT.shiva; else if(k==='inner') a=Math.min(.8,mouthOpen*1.4)*.8; else if(k==='tongue') a=.9; else if(k==='fang') a=Math.min(1,mouthOpen*4);
+      else if(k==='lip') a=.85-.55*WT.shiva-.3*WT.om; else if(k==='inner') a=Math.min(.8,mouthOpen*1.4)*.8; else if(k==='tongue') a=.9; else if(k==='fang') a=Math.min(1,mouthOpen*4);
       else if(k==='hairK') a=.55+.35*Math.sin(t*3+p.ph)+energy*.3;
       else if(k==='trunk'||k==='earG') a=.95;
       else a=.8;
@@ -939,7 +1002,7 @@ function frame(now){
   const te=[baseX+(domeZ(250,193)+6)*Math.sin(yaw)*S, Y0+193*S+breatheY];
   const bl=cx.createRadialGradient(te[0],te[1],0,te[0],te[1],34*S*(1+energy*.9+climax*.8));
   const bc=BLOOM[cur]||'255,215,150';
-  bl.addColorStop(0,'rgba('+bc+','+Math.min(1,.45+energy*.4+climax*.4).toFixed(3)+')'); bl.addColorStop(1,'rgba(255,100,60,0)');
+  bl.addColorStop(0,'rgba('+bc+','+(Math.min(1,.45+energy*.4+climax*.4)*(1-WT.om)).toFixed(3)+')'); bl.addColorStop(1,'rgba(255,100,60,0)');
   cx.globalAlpha=1; cx.fillStyle=bl; cx.fillRect(te[0]-120*S,te[1]-120*S,240*S,240*S);
   if(WT.shiva>.05){ const mp=[baseX+(372-250)*S, Y0+92*S+breatheY], mg=cx.createRadialGradient(mp[0],mp[1],0,mp[0],mp[1],46*S);
     mg.addColorStop(0,'rgba(220,230,255,'+(.3*WT.shiva).toFixed(3)+')'); mg.addColorStop(1,'rgba(220,230,255,0)'); cx.fillStyle=mg; cx.fillRect(mp[0]-46*S,mp[1]-46*S,92*S,92*S); }
